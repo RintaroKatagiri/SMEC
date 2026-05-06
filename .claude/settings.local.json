@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "mcp__github__create_pull_request",
+      "mcp__github__update_pull_request",
+      "Bash(git remote *)",
+      "mcp__github__list_pull_requests",
+      "Bash(mkdir -p /c/Users/r00000789/SMEC/.claude/skills/exam-question-drill/references)",
+      "Bash(mv /c/Users/r00000789/SMEC/skills/exam-question-drill/SKILL.md /c/Users/r00000789/SMEC/.claude/skills/exam-question-drill/SKILL.md)",
+      "Bash(mv /c/Users/r00000789/SMEC/skills/exam-question-drill/references/past-exam-style.md /c/Users/r00000789/SMEC/.claude/skills/exam-question-drill/references/past-exam-style.md)"
+    ]
+  }
+}

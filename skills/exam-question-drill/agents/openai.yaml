@@ -1,0 +1,5 @@
+interface:
+  display_name: "Exam Question Drill"
+  short_description: "本試験寄りの演習問題を作成"
+  default_prompt: "Use $exam-question-drill to create challenging exam-style questions from the specified subject materials."
+
