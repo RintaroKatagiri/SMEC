@@ -41,6 +41,29 @@ This is useful for:
 - accounting or finance interpretations
 - marketing and organization theory comparisons
 
+## Calculation Or Table Interpretation
+
+Use when the subject tests formulas, accounting treatments, or numerical judgment.
+
+Use this pattern as part of a balanced sequence. It should appear regularly in 財務・会計, but should not crowd out conceptual, statement-comparison, or treatment-selection questions unless the user asks for calculation-only practice.
+
+Good prompts:
+
+- Provide a compact table of figures and ask for the closest value.
+- Ask for the effect of one transaction on a ratio, account, or cash cycle.
+- Combine a short case with one formula choice, then require the calculation.
+- Ask which calculation path is appropriate when similar formulas are easily confused.
+
+Good distractors:
+
+- Use the wrong denominator or period.
+- Reverse plus/minus signs.
+- Ignore an opening balance or existing allowance.
+- Ignore time value or apply the wrong discount rate.
+- Mix a similar ratio, cost category, or asset/liability classification.
+
+Always state units, rounding, and whether the answer should be before-tax or after-tax when relevant.
+
 ## Exception Or Boundary
 
 Ask about when a generally true rule does not apply, or what condition changes the answer.

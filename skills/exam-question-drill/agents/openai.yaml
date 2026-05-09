@@ -1,4 +1,4 @@
 interface:
   display_name: "Exam Question Drill"
-  short_description: "指定教材から本試験風の演習問題を1問ずつ作成"
-  default_prompt: "Use $exam-question-drill to create challenging exam-style questions from the specified subject materials."
+  short_description: "指定教材から計算問題を含む本試験風演習を1問ずつ作成"
+  default_prompt: "Use $exam-question-drill to create challenging exam-style questions, including calculation drills when appropriate, from the specified subject materials."

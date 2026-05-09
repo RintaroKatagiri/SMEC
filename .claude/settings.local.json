@@ -10,7 +10,9 @@
       "mcp__github__list_pull_requests",
       "Bash(mkdir -p /c/Users/r00000789/SMEC/.claude/skills/exam-question-drill/references)",
       "Bash(mv /c/Users/r00000789/SMEC/skills/exam-question-drill/SKILL.md /c/Users/r00000789/SMEC/.claude/skills/exam-question-drill/SKILL.md)",
-      "Bash(mv /c/Users/r00000789/SMEC/skills/exam-question-drill/references/past-exam-style.md /c/Users/r00000789/SMEC/.claude/skills/exam-question-drill/references/past-exam-style.md)"
+      "Bash(mv /c/Users/r00000789/SMEC/skills/exam-question-drill/references/past-exam-style.md /c/Users/r00000789/SMEC/.claude/skills/exam-question-drill/references/past-exam-style.md)",
+      "Bash(git rm *)",
+      "Bash(git commit *)"
     ]
   }
 }
