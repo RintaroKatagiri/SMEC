@@ -1,0 +1,3 @@
+display_name: HEIC to PNG Cleanup
+short_description: Convert HEIC/HEIF images to PNG and delete originals after verification.
+default_prompt: Convert HEIC images to PNG, verify outputs, and remove the original HEIC files after successful conversion.
