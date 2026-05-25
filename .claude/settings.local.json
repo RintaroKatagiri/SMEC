@@ -12,7 +12,9 @@
       "Bash(mv /c/Users/r00000789/SMEC/skills/exam-question-drill/SKILL.md /c/Users/r00000789/SMEC/.claude/skills/exam-question-drill/SKILL.md)",
       "Bash(mv /c/Users/r00000789/SMEC/skills/exam-question-drill/references/past-exam-style.md /c/Users/r00000789/SMEC/.claude/skills/exam-question-drill/references/past-exam-style.md)",
       "Bash(git rm *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(powershell *)",
+      "Bash(git stash *)"
     ]
   }
 }
