@@ -1,0 +1,765 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>マンデル・フレミングモデル図解</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --border: #d9e0e8;
+      --grid: #e7ebf0;
+      --axis: #344054;
+      --blue: #2563eb;
+      --green: #16803c;
+      --red: #c2410c;
+      --amber: #b7791f;
+      --violet: #7c3aed;
+      --shadow: 0 8px 24px rgba(23, 32, 51, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.65;
+    }
+
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 28px auto 44px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(26px, 4vw, 38px);
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 20px;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 8px 0;
+    }
+
+    .lead,
+    .note,
+    .source {
+      color: var(--muted);
+    }
+
+    .lead {
+      max-width: 900px;
+      margin-bottom: 18px;
+    }
+
+    .source {
+      font-size: 13px;
+      margin-top: 20px;
+    }
+
+    .mode-bar {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin: 18px 0;
+      padding: 8px;
+      background: #e9eef5;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .mode-button {
+      min-height: 50px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--text);
+      font: inherit;
+      font-weight: 700;
+      letter-spacing: 0;
+      cursor: pointer;
+    }
+
+    .mode-button[aria-pressed="true"] {
+      background: var(--panel);
+      border-color: var(--border);
+      box-shadow: 0 4px 14px rgba(23, 32, 51, 0.08);
+      color: #1d4ed8;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.38fr) minmax(320px, 0.62fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    section,
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    section {
+      padding: 18px;
+    }
+
+    .panel {
+      padding: 16px;
+    }
+
+    .chart {
+      width: 100%;
+      aspect-ratio: 1.25 / 1;
+      min-height: 390px;
+      display: block;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .metric {
+      min-height: 86px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fafbfc;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 22px;
+      line-height: 1.3;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: #eef4ff;
+      color: #1d4ed8;
+      font-weight: 700;
+    }
+
+    .flow {
+      display: grid;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .flow-step {
+      position: relative;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #ffffff;
+      min-height: 46px;
+    }
+
+    .flow-step::before {
+      content: "";
+      position: absolute;
+      left: -1px;
+      top: 10px;
+      bottom: 10px;
+      width: 4px;
+      border-radius: 6px;
+      background: var(--blue);
+    }
+
+    .exam-box {
+      margin-top: 16px;
+      padding: 14px;
+      border: 1px solid #f3d2a2;
+      border-radius: 8px;
+      background: #fff8ed;
+    }
+
+    .exam-box strong {
+      color: #8a4b0f;
+    }
+
+    .rule-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .mini {
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    .mini-svg {
+      width: 100%;
+      aspect-ratio: 1.55 / 1;
+      min-height: 180px;
+      display: block;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .swatch {
+      width: 13px;
+      height: 13px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+
+    .axis {
+      stroke: var(--axis);
+      stroke-width: 2;
+    }
+
+    .grid-line {
+      stroke: var(--grid);
+      stroke-width: 1;
+    }
+
+    .bp-line {
+      stroke: var(--green);
+      stroke-width: 3;
+      stroke-dasharray: 9 6;
+    }
+
+    .curve {
+      fill: none;
+      stroke-width: 4;
+      stroke-linecap: round;
+    }
+
+    .old {
+      opacity: 0.32;
+    }
+
+    .new {
+      opacity: 1;
+    }
+
+    .return-line {
+      fill: none;
+      stroke: var(--amber);
+      stroke-width: 4;
+      stroke-dasharray: 7 6;
+      stroke-linecap: round;
+    }
+
+    .shift-arrow {
+      stroke: var(--amber);
+      stroke-width: 3;
+      fill: none;
+      marker-end: url(#arrowAmber);
+    }
+
+    .point-initial {
+      fill: #ffffff;
+      stroke: var(--axis);
+      stroke-width: 3;
+    }
+
+    .point-temp {
+      fill: var(--amber);
+      stroke: #ffffff;
+      stroke-width: 3;
+    }
+
+    .point-final {
+      fill: var(--red);
+      stroke: #ffffff;
+      stroke-width: 3;
+    }
+
+    .axis-label,
+    .chart-label {
+      fill: var(--axis);
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .small-label {
+      fill: var(--muted);
+      font-size: 12px;
+    }
+
+    .effect-positive {
+      color: #067647;
+      background: #ecfdf3;
+    }
+
+    .effect-neutral {
+      color: #8a4b0f;
+      background: #fff8ed;
+    }
+
+    @media (max-width: 960px) {
+      .layout,
+      .rule-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      main {
+        width: min(100% - 20px, 1180px);
+        margin-top: 20px;
+      }
+
+      .mode-bar,
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      section,
+      .panel {
+        padding: 14px;
+      }
+
+      .chart {
+        min-height: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>マンデル・フレミングモデル図解</h1>
+    <p class="lead">小国開放経済・完全資本移動の前提で、政策によるIS曲線・LM曲線のシフト、資本移動、為替レートまたは中央銀行介入までを1枚の図で確認する。</p>
+
+    <div class="mode-bar" role="group" aria-label="政策パターン">
+      <button class="mode-button" type="button" data-case="floatingMonetary" aria-pressed="true">変動相場制 × 金融緩和</button>
+      <button class="mode-button" type="button" data-case="floatingFiscal" aria-pressed="false">変動相場制 × 財政拡張</button>
+      <button class="mode-button" type="button" data-case="fixedMonetary" aria-pressed="false">固定相場制 × 金融緩和</button>
+      <button class="mode-button" type="button" data-case="fixedFiscal" aria-pressed="false">固定相場制 × 財政拡張</button>
+    </div>
+
+    <div class="layout">
+      <section>
+        <h2 id="caseTitle">変動相場制 × 金融緩和</h2>
+        <svg class="chart" id="chart" viewBox="0 0 760 560" role="img" aria-label="IS-LM-BP図">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#344054"></path>
+            </marker>
+            <marker id="arrowAmber" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#b7791f"></path>
+            </marker>
+          </defs>
+          <g id="grid"></g>
+          <line class="axis" x1="76" y1="480" x2="690" y2="480" marker-end="url(#arrow)"></line>
+          <line class="axis" x1="76" y1="480" x2="76" y2="58" marker-end="url(#arrow)"></line>
+          <text class="axis-label" x="694" y="485">国民所得 Y</text>
+          <text class="axis-label" x="56" y="48">利子率 i</text>
+          <line id="bpLine" class="bp-line" x1="76" y1="0" x2="690" y2="0"></line>
+          <text id="bpText" class="chart-label" x="0" y="0">BP: i = i*</text>
+          <path id="is0" class="curve old" stroke="#2563eb"></path>
+          <path id="lm0" class="curve old" stroke="#7c3aed"></path>
+          <path id="is1" class="curve new" stroke="#2563eb"></path>
+          <path id="lm1" class="curve new" stroke="#7c3aed"></path>
+          <path id="returnCurve" class="return-line"></path>
+          <path id="shiftArrow1" class="shift-arrow"></path>
+          <path id="shiftArrow2" class="shift-arrow"></path>
+          <circle id="pointA" class="point-initial" r="8"></circle>
+          <circle id="pointB" class="point-temp" r="8"></circle>
+          <circle id="pointC" class="point-final" r="9"></circle>
+          <text id="labelA" class="chart-label">A</text>
+          <text id="labelB" class="chart-label">B</text>
+          <text id="labelC" class="chart-label">C</text>
+          <text id="labelIS0" class="small-label"></text>
+          <text id="labelIS1" class="small-label"></text>
+          <text id="labelLM0" class="small-label"></text>
+          <text id="labelLM1" class="small-label"></text>
+        </svg>
+        <div class="legend">
+          <span class="legend-item"><span class="swatch" style="background:#2563eb;"></span>IS曲線</span>
+          <span class="legend-item"><span class="swatch" style="background:#7c3aed;"></span>LM曲線</span>
+          <span class="legend-item"><span class="swatch" style="background:#16803c;"></span>世界利子率 i*</span>
+          <span class="legend-item"><span class="swatch" style="background:#b7791f;"></span>政策直後</span>
+          <span class="legend-item"><span class="swatch" style="background:#c2410c;"></span>最終均衡</span>
+        </div>
+      </section>
+
+      <aside class="panel">
+        <h2>読み取り</h2>
+        <span class="badge" id="effectBadge">金融政策は有効</span>
+        <div class="summary-grid">
+          <div class="metric">
+            <span>政策直後の利子率</span>
+            <strong id="ratePressure">i &lt; i*</strong>
+          </div>
+          <div class="metric">
+            <span>資本移動</span>
+            <strong id="capitalFlow">資本流出</strong>
+          </div>
+          <div class="metric">
+            <span>為替圧力</span>
+            <strong id="exchangePressure">自国通貨安</strong>
+          </div>
+          <div class="metric">
+            <span>国民所得</span>
+            <strong id="incomeResult">増加</strong>
+          </div>
+        </div>
+        <div class="flow" id="flow"></div>
+        <div class="exam-box">
+          <strong>試験での見方</strong>
+          <p id="examHint">変動相場制では、為替レートが動くため、金融緩和は自国通貨安と純輸出増加を通じて効く。</p>
+        </div>
+      </aside>
+    </div>
+
+    <section style="margin-top: 18px;">
+      <h2>4パターンの結論</h2>
+      <div class="rule-grid">
+        <div class="mini">
+          <h3>変動相場制</h3>
+          <svg class="mini-svg" viewBox="0 0 480 300" role="img" aria-label="変動相場制の政策効果">
+            <line class="axis" x1="44" y1="250" x2="430" y2="250"></line>
+            <line class="axis" x1="44" y1="250" x2="44" y2="42"></line>
+            <line x1="44" y1="143" x2="430" y2="143" stroke="#16803c" stroke-width="3" stroke-dasharray="8 5"></line>
+            <path d="M 72 64 L 358 236" fill="none" stroke="#2563eb" stroke-width="4" stroke-linecap="round"></path>
+            <path d="M 90 235 L 360 56" fill="none" stroke="#7c3aed" stroke-width="4" stroke-linecap="round"></path>
+            <path d="M 140 235 L 410 56" fill="none" stroke="#7c3aed" stroke-width="4" stroke-linecap="round" opacity="0.35"></path>
+            <path d="M 128 64 L 414 236" fill="none" stroke="#2563eb" stroke-width="4" stroke-linecap="round" opacity="0.35"></path>
+            <text class="chart-label" x="84" y="30">金融政策: 有効</text>
+            <text class="chart-label" x="254" y="30">財政政策: 無効</text>
+            <text class="small-label" x="330" y="276">Y</text>
+            <text class="small-label" x="24" y="46">i</text>
+          </svg>
+          <p class="note">為替レートが動く。金融政策は自国通貨安・純輸出増加を通じて効く。財政政策は自国通貨高・純輸出減少で打ち消されやすい。</p>
+        </div>
+        <div class="mini">
+          <h3>固定相場制</h3>
+          <svg class="mini-svg" viewBox="0 0 480 300" role="img" aria-label="固定相場制の政策効果">
+            <line class="axis" x1="44" y1="250" x2="430" y2="250"></line>
+            <line class="axis" x1="44" y1="250" x2="44" y2="42"></line>
+            <line x1="44" y1="143" x2="430" y2="143" stroke="#16803c" stroke-width="3" stroke-dasharray="8 5"></line>
+            <path d="M 72 64 L 358 236" fill="none" stroke="#2563eb" stroke-width="4" stroke-linecap="round"></path>
+            <path d="M 90 235 L 360 56" fill="none" stroke="#7c3aed" stroke-width="4" stroke-linecap="round"></path>
+            <path d="M 128 64 L 414 236" fill="none" stroke="#2563eb" stroke-width="4" stroke-linecap="round" opacity="0.35"></path>
+            <path d="M 140 235 L 410 56" fill="none" stroke="#7c3aed" stroke-width="4" stroke-linecap="round" opacity="0.35"></path>
+            <text class="chart-label" x="84" y="30">金融政策: 無効</text>
+            <text class="chart-label" x="254" y="30">財政政策: 有効</text>
+            <text class="small-label" x="330" y="276">Y</text>
+            <text class="small-label" x="24" y="46">i</text>
+          </svg>
+          <p class="note">為替レートを固定するため中央銀行が介入する。金融政策は介入で打ち消され、財政政策は貨幣供給増加を伴って効く。</p>
+        </div>
+      </div>
+    </section>
+
+    <p class="source">対応ノート: マンデルフレミングモデル.md</p>
+  </main>
+
+  <script>
+    const chart = {
+      left: 76,
+      top: 58,
+      right: 690,
+      bottom: 480,
+      maxX: 100,
+      maxY: 100
+    };
+
+    const cases = {
+      floatingMonetary: {
+        title: "変動相場制 × 金融緩和",
+        effect: "金融政策は有効",
+        effectClass: "effect-positive",
+        rate: "i < i*",
+        capital: "資本流出",
+        exchange: "自国通貨安",
+        income: "増加",
+        curves: { is: "base", lm: "right", return: "isRight" },
+        final: { x: 70, y: 60 },
+        temp: { x: 60, y: 52 },
+        arrows: [
+          { from: [49, 54], to: [61, 47] },
+          { from: [58, 66], to: [69, 61] }
+        ],
+        flow: [
+          "金融緩和でLM曲線が右にシフトする",
+          "国内利子率が世界利子率を下回り、資本流出が起こる",
+          "自国通貨安により純輸出が増え、IS曲線が右にシフトする",
+          "最終的に i = i* に戻り、国民所得は増加する"
+        ],
+        hint: "変動相場制では、為替レートが動くため、金融緩和は自国通貨安と純輸出増加を通じて効く。"
+      },
+      floatingFiscal: {
+        title: "変動相場制 × 財政拡張",
+        effect: "財政政策は無効",
+        effectClass: "effect-neutral",
+        rate: "i > i*",
+        capital: "資本流入",
+        exchange: "自国通貨高",
+        income: "不変",
+        curves: { is: "rightThenBack", lm: "base", return: "isBack" },
+        final: { x: 50, y: 60 },
+        temp: { x: 60, y: 68 },
+        arrows: [
+          { from: [51, 59], to: [60, 68] },
+          { from: [62, 66], to: [51, 61] }
+        ],
+        flow: [
+          "財政拡張でIS曲線が右にシフトする",
+          "国内利子率が世界利子率を上回り、資本流入が起こる",
+          "自国通貨高により純輸出が減り、IS曲線が元に戻る",
+          "完全資本移動の前提では、国民所得の増加は打ち消される"
+        ],
+        hint: "変動相場制では、財政拡張による金利上昇が自国通貨高を招き、純輸出減少で効果が打ち消されやすい。"
+      },
+      fixedMonetary: {
+        title: "固定相場制 × 金融緩和",
+        effect: "金融政策は無効",
+        effectClass: "effect-neutral",
+        rate: "i < i*",
+        capital: "資本流出",
+        exchange: "自国通貨安圧力",
+        income: "不変",
+        curves: { is: "base", lm: "rightThenBack", return: "lmBack" },
+        final: { x: 50, y: 60 },
+        temp: { x: 60, y: 52 },
+        arrows: [
+          { from: [49, 54], to: [61, 47] },
+          { from: [60, 52], to: [51, 60] }
+        ],
+        flow: [
+          "金融緩和でLM曲線が右にシフトする",
+          "国内利子率が世界利子率を下回り、資本流出が起こる",
+          "自国通貨安圧力を止めるため、中央銀行が自国通貨を買う",
+          "貨幣供給量が減り、LM曲線が元に戻る"
+        ],
+        hint: "固定相場制では、為替レートを守る介入で貨幣供給が減るため、金融緩和は打ち消される。"
+      },
+      fixedFiscal: {
+        title: "固定相場制 × 財政拡張",
+        effect: "財政政策は有効",
+        effectClass: "effect-positive",
+        rate: "i > i*",
+        capital: "資本流入",
+        exchange: "自国通貨高圧力",
+        income: "増加",
+        curves: { is: "right", lm: "right", return: "none" },
+        final: { x: 70, y: 60 },
+        temp: { x: 60, y: 68 },
+        arrows: [
+          { from: [51, 59], to: [60, 68] },
+          { from: [60, 68], to: [70, 60] }
+        ],
+        flow: [
+          "財政拡張でIS曲線が右にシフトする",
+          "国内利子率が世界利子率を上回り、資本流入が起こる",
+          "自国通貨高圧力を止めるため、中央銀行が自国通貨を売る",
+          "貨幣供給量が増え、LM曲線も右にシフトして国民所得が増加する"
+        ],
+        hint: "固定相場制では、為替レートを守る介入が貨幣供給を増やすため、財政政策を後押しする。"
+      }
+    };
+
+    const buttons = [...document.querySelectorAll(".mode-button")];
+    const grid = document.getElementById("grid");
+    const bpLine = document.getElementById("bpLine");
+    const bpText = document.getElementById("bpText");
+    const is0 = document.getElementById("is0");
+    const lm0 = document.getElementById("lm0");
+    const is1 = document.getElementById("is1");
+    const lm1 = document.getElementById("lm1");
+    const returnCurve = document.getElementById("returnCurve");
+    const arrow1 = document.getElementById("shiftArrow1");
+    const arrow2 = document.getElementById("shiftArrow2");
+    const pointA = document.getElementById("pointA");
+    const pointB = document.getElementById("pointB");
+    const pointC = document.getElementById("pointC");
+    const labelA = document.getElementById("labelA");
+    const labelB = document.getElementById("labelB");
+    const labelC = document.getElementById("labelC");
+    const labelIS0 = document.getElementById("labelIS0");
+    const labelIS1 = document.getElementById("labelIS1");
+    const labelLM0 = document.getElementById("labelLM0");
+    const labelLM1 = document.getElementById("labelLM1");
+    const caseTitle = document.getElementById("caseTitle");
+    const effectBadge = document.getElementById("effectBadge");
+    const ratePressure = document.getElementById("ratePressure");
+    const capitalFlow = document.getElementById("capitalFlow");
+    const exchangePressure = document.getElementById("exchangePressure");
+    const incomeResult = document.getElementById("incomeResult");
+    const flow = document.getElementById("flow");
+    const examHint = document.getElementById("examHint");
+
+    const lines = {
+      isBase: [[22, 82], [82, 32]],
+      isRight: [[34, 90], [94, 40]],
+      lmBase: [[18, 18], [82, 82]],
+      lmRight: [[30, 18], [94, 82]]
+    };
+
+    function sx(x) {
+      return chart.left + (x / chart.maxX) * (chart.right - chart.left);
+    }
+
+    function sy(y) {
+      return chart.bottom - (y / chart.maxY) * (chart.bottom - chart.top);
+    }
+
+    function pathFrom(points) {
+      return `M ${sx(points[0][0])} ${sy(points[0][1])} L ${sx(points[1][0])} ${sy(points[1][1])}`;
+    }
+
+    function arrowPath(arrow) {
+      return `M ${sx(arrow.from[0])} ${sy(arrow.from[1])} L ${sx(arrow.to[0])} ${sy(arrow.to[1])}`;
+    }
+
+    function setPoint(el, p) {
+      el.setAttribute("cx", sx(p.x));
+      el.setAttribute("cy", sy(p.y));
+    }
+
+    function setLabel(el, p, text, dx = 9, dy = -10) {
+      el.setAttribute("x", sx(p.x) + dx);
+      el.setAttribute("y", sy(p.y) + dy);
+      el.textContent = text;
+    }
+
+    function drawGrid() {
+      const ticks = [0, 25, 50, 75, 100];
+      ticks.forEach((tick) => {
+        if (tick > 0) {
+          grid.innerHTML += `<line class="grid-line" x1="${sx(tick)}" y1="${chart.top}" x2="${sx(tick)}" y2="${chart.bottom}"></line>`;
+          grid.innerHTML += `<line class="grid-line" x1="${chart.left}" y1="${sy(tick)}" x2="${chart.right}" y2="${sy(tick)}"></line>`;
+        }
+        grid.innerHTML += `<text class="small-label" x="${sx(tick) - 8}" y="${chart.bottom + 24}">${tick}</text>`;
+        grid.innerHTML += `<text class="small-label" x="${chart.left - 32}" y="${sy(tick) + 5}">${tick}</text>`;
+      });
+      bpLine.setAttribute("y1", sy(60));
+      bpLine.setAttribute("y2", sy(60));
+      bpText.setAttribute("x", sx(76));
+      bpText.setAttribute("y", sy(60) - 10);
+    }
+
+    function update(caseKey) {
+      const c = cases[caseKey];
+      caseTitle.textContent = c.title;
+      effectBadge.textContent = c.effect;
+      effectBadge.className = `badge ${c.effectClass}`;
+      ratePressure.textContent = c.rate;
+      capitalFlow.textContent = c.capital;
+      exchangePressure.textContent = c.exchange;
+      incomeResult.textContent = c.income;
+      examHint.textContent = c.hint;
+      flow.innerHTML = c.flow.map((step) => `<div class="flow-step">${step}</div>`).join("");
+
+      const showIsRight = c.curves.is === "right" || c.curves.is === "rightThenBack";
+      const showLmRight = c.curves.lm === "right" || c.curves.lm === "rightThenBack";
+      is0.setAttribute("d", pathFrom(lines.isBase));
+      lm0.setAttribute("d", pathFrom(lines.lmBase));
+      is1.setAttribute("d", pathFrom(showIsRight ? lines.isRight : lines.isBase));
+      lm1.setAttribute("d", pathFrom(showLmRight ? lines.lmRight : lines.lmBase));
+      is1.style.opacity = showIsRight ? "1" : "0";
+      lm1.style.opacity = showLmRight ? "1" : "0";
+      is0.style.opacity = showIsRight ? "0.30" : "1";
+      lm0.style.opacity = showLmRight ? "0.30" : "1";
+
+      if (c.curves.return === "isBack") {
+        returnCurve.setAttribute("d", pathFrom(lines.isRight));
+        returnCurve.style.opacity = "1";
+      } else if (c.curves.return === "lmBack") {
+        returnCurve.setAttribute("d", pathFrom(lines.lmRight));
+        returnCurve.style.opacity = "1";
+      } else if (c.curves.return === "isRight") {
+        returnCurve.setAttribute("d", pathFrom(lines.isRight));
+        returnCurve.style.opacity = "1";
+      } else {
+        returnCurve.style.opacity = "0";
+      }
+
+      arrow1.setAttribute("d", arrowPath(c.arrows[0]));
+      arrow2.setAttribute("d", arrowPath(c.arrows[1]));
+      setPoint(pointA, { x: 50, y: 60 });
+      setPoint(pointB, c.temp);
+      setPoint(pointC, c.final);
+      setLabel(labelA, { x: 50, y: 60 }, "A", 10, -16);
+      setLabel(labelB, c.temp, "B", -18, 24);
+      setLabel(labelC, c.final, "C", 12, 22);
+      labelIS0.setAttribute("x", sx(22));
+      labelIS0.setAttribute("y", sy(82) - 10);
+      labelIS0.textContent = "IS0";
+      labelIS1.setAttribute("x", sx(36));
+      labelIS1.setAttribute("y", sy(88) - 10);
+      labelIS1.textContent = showIsRight ? "IS1" : "";
+      labelLM0.setAttribute("x", sx(78));
+      labelLM0.setAttribute("y", sy(78) - 8);
+      labelLM0.textContent = "LM0";
+      labelLM1.setAttribute("x", sx(90));
+      labelLM1.setAttribute("y", sy(78) - 8);
+      labelLM1.textContent = showLmRight ? "LM1" : "";
+
+      buttons.forEach((button) => {
+        button.setAttribute("aria-pressed", String(button.dataset.case === caseKey));
+      });
+    }
+
+    drawGrid();
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => update(button.dataset.case));
+    });
+    update("floatingMonetary");
+  </script>
+</body>
+</html>
