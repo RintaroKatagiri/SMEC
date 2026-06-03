@@ -1,0 +1,741 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>需要の弾力性グラフ</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --border: #d9e0e8;
+      --grid: #e7ebf0;
+      --axis: #344054;
+      --blue: #2563eb;
+      --green: #16803c;
+      --red: #c2410c;
+      --amber: #b7791f;
+      --violet: #7c3aed;
+      --cyan: #0284c7;
+      --shadow: 0 8px 24px rgba(23, 32, 51, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.65;
+    }
+
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 28px auto 44px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(26px, 4vw, 38px);
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 20px;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 8px 0;
+    }
+
+    .lead,
+    .note,
+    .source {
+      color: var(--muted);
+    }
+
+    .lead {
+      max-width: 860px;
+      margin-bottom: 18px;
+    }
+
+    .source {
+      font-size: 13px;
+      margin-top: 20px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.65fr);
+      gap: 18px;
+      align-items: start;
+      margin-top: 18px;
+    }
+
+    section,
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    section {
+      padding: 18px;
+    }
+
+    .panel {
+      padding: 16px;
+    }
+
+    .chart-shell {
+      min-width: 0;
+    }
+
+    .chart {
+      width: 100%;
+      aspect-ratio: 1.25 / 1;
+      min-height: 340px;
+      display: block;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    label {
+      display: block;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--blue);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: #eef4ff;
+      color: #1d4ed8;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .metric {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      min-height: 86px;
+      background: #fafbfc;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 24px;
+      line-height: 1.25;
+    }
+
+    .formula {
+      padding: 12px;
+      border-left: 4px solid var(--blue);
+      background: #f8fbff;
+      border-radius: 6px;
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .mini-chart {
+      width: 100%;
+      aspect-ratio: 1.25 / 1;
+      min-height: 200px;
+      display: block;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+
+    .rule-list {
+      margin: 8px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .rule-list li {
+      padding: 10px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .rule-list li:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .exam-box {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 8px;
+      background: #fff8ed;
+      border: 1px solid #f3d2a2;
+    }
+
+    .exam-box strong {
+      color: #8a4b0f;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .axis-label,
+    .chart-label {
+      fill: var(--axis);
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .small-label {
+      fill: var(--muted);
+      font-size: 12px;
+    }
+
+    .demand-line {
+      fill: none;
+      stroke: var(--blue);
+      stroke-width: 4;
+      stroke-linecap: round;
+    }
+
+    .dash {
+      stroke: #98a2b3;
+      stroke-width: 2;
+      stroke-dasharray: 5 5;
+    }
+
+    .axis {
+      stroke: var(--axis);
+      stroke-width: 2;
+    }
+
+    .grid-line {
+      stroke: var(--grid);
+      stroke-width: 1;
+    }
+
+    .point {
+      fill: var(--red);
+      stroke: #ffffff;
+      stroke-width: 3;
+    }
+
+    @media (max-width: 900px) {
+      .layout,
+      .grid,
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+
+      .chart {
+        min-height: 300px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      main {
+        width: min(100% - 20px, 1180px);
+        margin-top: 20px;
+      }
+
+      section,
+      .panel {
+        padding: 14px;
+      }
+
+      .controls,
+      .metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .chart {
+        min-height: 260px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>需要の弾力性グラフ</h1>
+    <p class="lead">横軸を数量、縦軸を価格として、需要曲線の傾きや曲線上の位置によって価格弾力性がどう変わるかを見る。</p>
+
+    <div class="layout">
+      <section class="chart-shell">
+        <h2>直線需要曲線上の価格弾力性</h2>
+        <svg class="chart" id="mainChart" viewBox="0 0 720 520" role="img" aria-label="直線需要曲線の価格弾力性">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#344054"></path>
+            </marker>
+          </defs>
+          <g id="mainGrid"></g>
+          <line class="axis" x1="70" y1="450" x2="650" y2="450" marker-end="url(#arrow)"></line>
+          <line class="axis" x1="70" y1="450" x2="70" y2="50" marker-end="url(#arrow)"></line>
+          <text class="axis-label" x="655" y="455">数量 Q</text>
+          <text class="axis-label" x="48" y="44">価格 P</text>
+          <path class="demand-line" d="M 70 50 L 650 450"></path>
+          <text class="chart-label" x="360" y="238">D</text>
+          <g id="elasticZones"></g>
+          <line id="priceGuide" class="dash" x1="70" y1="0" x2="0" y2="0"></line>
+          <line id="quantityGuide" class="dash" x1="0" y1="450" x2="0" y2="0"></line>
+          <circle id="selectedPoint" class="point" cx="0" cy="0" r="9"></circle>
+          <text id="pointText" class="chart-label" x="0" y="0"></text>
+        </svg>
+        <div class="controls">
+          <label>
+            曲線上の位置
+            <input id="pointSlider" type="range" min="10" max="110" value="35" step="1">
+          </label>
+          <span class="pill" id="elasticityLabel">弾力的</span>
+        </div>
+      </section>
+
+      <aside class="panel">
+        <h2>読み取り</h2>
+        <div class="metrics">
+          <div class="metric">
+            <span>価格</span>
+            <strong id="priceValue">65</strong>
+          </div>
+          <div class="metric">
+            <span>数量</span>
+            <strong id="quantityValue">35</strong>
+          </div>
+          <div class="metric">
+            <span>|価格弾力性|</span>
+            <strong id="elasticityValue">1.86</strong>
+          </div>
+          <div class="metric">
+            <span>値下げ時の総収入</span>
+            <strong id="revenueValue">増えやすい</strong>
+          </div>
+        </div>
+        <div class="formula">需要の価格弾力性 = 需要量の変化率 ÷ 価格の変化率</div>
+        <ul class="rule-list">
+          <li><strong>|弾力性| &gt; 1</strong>: 価格変化より数量変化が大きい。値下げで総収入は増えやすい。</li>
+          <li><strong>|弾力性| = 1</strong>: 価格変化と数量変化の影響が釣り合う。総収入は最大付近。</li>
+          <li><strong>|弾力性| &lt; 1</strong>: 数量変化が小さい。値下げで総収入は減りやすい。</li>
+        </ul>
+        <div class="exam-box">
+          <strong>試験での見方</strong>
+          <p>右下がりの直線需要曲線では、左上ほど弾力的、中央で単位弾力的、右下ほど非弾力的になる。</p>
+        </div>
+      </aside>
+    </div>
+
+    <section style="margin-top: 18px;">
+      <h2>傾きで見る弾力性</h2>
+      <div class="two-col">
+        <div>
+          <h3>緩やかな需要曲線</h3>
+          <svg class="mini-chart" viewBox="0 0 420 320" role="img" aria-label="緩やかな需要曲線">
+            <line class="axis" x1="50" y1="270" x2="380" y2="270"></line>
+            <line class="axis" x1="50" y1="270" x2="50" y2="40"></line>
+            <path d="M 60 110 L 360 220" fill="none" stroke="#2563eb" stroke-width="4" stroke-linecap="round"></path>
+            <line x1="88" y1="120" x2="310" y2="202" stroke="#98a2b3" stroke-width="2" stroke-dasharray="5 5"></line>
+            <text class="chart-label" x="180" y="68">価格変化に対して数量が大きく動きやすい</text>
+            <text class="small-label" x="320" y="292">Q</text>
+            <text class="small-label" x="30" y="42">P</text>
+          </svg>
+          <p class="note">代替品が多い財は、価格が上がると他の財へ移りやすく、需要が弾力的になりやすい。</p>
+        </div>
+        <div>
+          <h3>急な需要曲線</h3>
+          <svg class="mini-chart" viewBox="0 0 420 320" role="img" aria-label="急な需要曲線">
+            <line class="axis" x1="50" y1="270" x2="380" y2="270"></line>
+            <line class="axis" x1="50" y1="270" x2="50" y2="40"></line>
+            <path d="M 170 55 L 250 265" fill="none" stroke="#c2410c" stroke-width="4" stroke-linecap="round"></path>
+            <line x1="182" y1="86" x2="238" y2="232" stroke="#98a2b3" stroke-width="2" stroke-dasharray="5 5"></line>
+            <text class="chart-label" x="114" y="36">価格が変わっても数量が動きにくい</text>
+            <text class="small-label" x="320" y="292">Q</text>
+            <text class="small-label" x="30" y="42">P</text>
+          </svg>
+          <p class="note">生活必需品や代替品が少ない財は、価格が変わっても需要が非弾力的になりやすい。</p>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top: 18px;">
+      <h2>極端なケースと所得弾力性</h2>
+      <div class="grid">
+        <div>
+          <h3>完全弾力的</h3>
+          <svg class="mini-chart" viewBox="0 0 360 280" role="img" aria-label="完全弾力的な需要曲線">
+            <line class="axis" x1="48" y1="230" x2="315" y2="230"></line>
+            <line class="axis" x1="48" y1="230" x2="48" y2="40"></line>
+            <line x1="58" y1="120" x2="300" y2="120" stroke="#16803c" stroke-width="5" stroke-linecap="round"></line>
+            <text class="chart-label" x="98" y="92">水平: 弾力性は無限大</text>
+            <text class="small-label" x="288" y="252">Q</text>
+            <text class="small-label" x="28" y="42">P</text>
+          </svg>
+        </div>
+        <div>
+          <h3>完全非弾力的</h3>
+          <svg class="mini-chart" viewBox="0 0 360 280" role="img" aria-label="完全非弾力的な需要曲線">
+            <line class="axis" x1="48" y1="230" x2="315" y2="230"></line>
+            <line class="axis" x1="48" y1="230" x2="48" y2="40"></line>
+            <line x1="180" y1="54" x2="180" y2="222" stroke="#7c3aed" stroke-width="5" stroke-linecap="round"></line>
+            <text class="chart-label" x="92" y="38">垂直: 弾力性は0</text>
+            <text class="small-label" x="288" y="252">Q</text>
+            <text class="small-label" x="28" y="42">P</text>
+          </svg>
+        </div>
+        <div>
+          <h3>所得弾力性</h3>
+          <svg class="mini-chart" viewBox="0 0 360 280" role="img" aria-label="所得弾力性">
+            <line class="axis" x1="48" y1="230" x2="315" y2="230"></line>
+            <line class="axis" x1="48" y1="230" x2="48" y2="40"></line>
+            <path d="M 66 205 L 292 74" fill="none" stroke="#16803c" stroke-width="4" stroke-linecap="round"></path>
+            <path d="M 66 150 L 292 150" fill="none" stroke="#0284c7" stroke-width="4" stroke-linecap="round"></path>
+            <path d="M 66 82 L 292 198" fill="none" stroke="#c2410c" stroke-width="4" stroke-linecap="round"></path>
+            <text class="small-label" x="252" y="66">正</text>
+            <text class="small-label" x="252" y="144">ゼロ</text>
+            <text class="small-label" x="252" y="214">負</text>
+            <text class="small-label" x="242" y="252">所得</text>
+            <text class="small-label" x="18" y="42">需要量</text>
+          </svg>
+          <div class="legend">
+            <span class="legend-item"><span class="swatch" style="background:#16803c;"></span>正常財</span>
+            <span class="legend-item"><span class="swatch" style="background:#0284c7;"></span>変化なし</span>
+            <span class="legend-item"><span class="swatch" style="background:#c2410c;"></span>劣等財</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 所得弾力性 専用セクション -->
+    <section style="margin-top: 18px;">
+      <h2>需要の所得弾力性</h2>
+      <p class="lead" style="margin-bottom:14px;">所得の変化に対して需要量がどの程度変化するかを示す指標。財の種類（正常財・上級財・劣等財）を判別する基準になる。</p>
+
+      <div class="formula">所得弾力性 = 需要量の変化率 ÷ 所得の変化率 = (ΔQ / Q) ÷ (ΔI / I)</div>
+
+      <div class="two-col" style="margin-top:18px;">
+        <!-- 左：分類表 -->
+        <section style="box-shadow:none; border:1px solid var(--border);">
+          <h3>財の分類</h3>
+          <ul class="rule-list">
+            <li>
+              <strong style="color:var(--green);">上級財（奢侈財） η &gt; 1</strong>
+              <p style="margin:4px 0 0; color:var(--muted); font-size:14px;">所得が増えると需要量が所得増加率を上回って増える。ブランド品・旅行・外食など。</p>
+            </li>
+            <li>
+              <strong style="color:var(--blue);">正常財（必需財） 0 &lt; η &lt; 1</strong>
+              <p style="margin:4px 0 0; color:var(--muted); font-size:14px;">所得が増えると需要量は増えるが、増加率は所得増加率より小さい。食料品・日用品など。</p>
+            </li>
+            <li>
+              <strong style="color:var(--cyan);">中立財 η = 0</strong>
+              <p style="margin:4px 0 0; color:var(--muted); font-size:14px;">所得が変化しても需要量は変わらない。塩など生活必需度が極めて高い財。</p>
+            </li>
+            <li>
+              <strong style="color:var(--red);">劣等財（下級財） η &lt; 0</strong>
+              <p style="margin:4px 0 0; color:var(--muted); font-size:14px;">所得が増えると需要量が減る。インスタント食品・バス移動など、所得増加で上位財へ代替される財。</p>
+            </li>
+          </ul>
+          <div class="exam-box" style="margin-top:14px;">
+            <strong>試験での見方</strong>
+            <p>「所得弾力性がマイナス＝劣等財」は頻出。正常財の中でもη&gt;1を「上級財」と呼ぶ点に注意。</p>
+          </div>
+        </section>
+
+        <!-- 右：インタラクティブグラフ -->
+        <section style="box-shadow:none; border:1px solid var(--border);">
+          <h3>所得と需要量の関係（エンゲル曲線）</h3>
+          <svg id="engelChart" class="chart" viewBox="0 0 480 380" role="img" aria-label="エンゲル曲線">
+            <defs>
+              <marker id="arrow2" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#344054"></path>
+              </marker>
+            </defs>
+            <!-- 軸 -->
+            <line class="axis" x1="60" y1="330" x2="440" y2="330" marker-end="url(#arrow2)"></line>
+            <line class="axis" x1="60" y1="330" x2="60" y2="30" marker-end="url(#arrow2)"></line>
+            <text class="axis-label" x="445" y="335">所得 I</text>
+            <text class="axis-label" x="36" y="24">需要量 Q</text>
+            <!-- グリッド -->
+            <line class="grid-line" x1="60" y1="230" x2="435" y2="230"></line>
+            <line class="grid-line" x1="60" y1="130" x2="435" y2="130"></line>
+            <line class="grid-line" x1="160" y1="35" x2="160" y2="330"></line>
+            <line class="grid-line" x1="260" y1="35" x2="260" y2="330"></line>
+            <line class="grid-line" x1="360" y1="35" x2="360" y2="330"></line>
+            <!-- 上級財: η>1 (急な右上がり) -->
+            <path d="M 80 300 Q 260 250 430 60" fill="none" stroke="#16803c" stroke-width="3.5" stroke-linecap="round"></path>
+            <text class="small-label" x="435" y="58" fill="#16803c">上級財 (η&gt;1)</text>
+            <!-- 正常財: η=0.5 (緩い右上がり) -->
+            <path d="M 80 270 L 430 170" fill="none" stroke="#2563eb" stroke-width="3.5" stroke-linecap="round"></path>
+            <text class="small-label" x="435" y="168" fill="#2563eb">正常財 (0&lt;η&lt;1)</text>
+            <!-- 中立財: 水平 -->
+            <path d="M 80 220 L 430 220" fill="none" stroke="#0284c7" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="8 4"></path>
+            <text class="small-label" x="435" y="218" fill="#0284c7">中立財 (η=0)</text>
+            <!-- 劣等財: 右下がり -->
+            <path d="M 80 180 L 430 280" fill="none" stroke="#c2410c" stroke-width="3.5" stroke-linecap="round"></path>
+            <text class="small-label" x="435" y="278" fill="#c2410c">劣等財 (η&lt;0)</text>
+          </svg>
+          <div class="legend">
+            <span class="legend-item"><span class="swatch" style="background:#16803c;"></span>上級財</span>
+            <span class="legend-item"><span class="swatch" style="background:#2563eb;"></span>正常財（必需財）</span>
+            <span class="legend-item"><span class="swatch" style="background:#0284c7;"></span>中立財</span>
+            <span class="legend-item"><span class="swatch" style="background:#c2410c;"></span>劣等財</span>
+          </div>
+        </section>
+      </div>
+
+      <!-- 数値シミュレーター -->
+      <section style="margin-top:14px; box-shadow:none; border:1px solid var(--border);">
+        <h3>数値シミュレーター</h3>
+        <div class="controls" style="max-width:600px;">
+          <label>
+            所得変化率（%）
+            <input id="incomeSlider" type="range" min="-50" max="50" value="20" step="1">
+          </label>
+          <span class="pill" id="incomeChangeLabel">+20%</span>
+        </div>
+        <div class="controls" style="max-width:600px; margin-top:8px;">
+          <label>
+            所得弾力性 η
+            <input id="etaSlider" type="range" min="-200" max="300" value="60" step="1">
+          </label>
+          <span class="pill" id="etaLabel">0.60</span>
+        </div>
+        <div class="metrics" style="max-width:600px; margin-top:14px;">
+          <div class="metric">
+            <span>所得変化率</span>
+            <strong id="simIncome">+20%</strong>
+          </div>
+          <div class="metric">
+            <span>需要量変化率</span>
+            <strong id="simDemand">+12%</strong>
+          </div>
+          <div class="metric">
+            <span>所得弾力性 η</span>
+            <strong id="simEta">0.60</strong>
+          </div>
+          <div class="metric">
+            <span>財の種類</span>
+            <strong id="simType">正常財</strong>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <p class="source">対応ノート: 需要の弾力性.md</p>
+  </main>
+
+  <script>
+    const slider = document.getElementById("pointSlider");
+    const point = document.getElementById("selectedPoint");
+    const pointText = document.getElementById("pointText");
+    const priceGuide = document.getElementById("priceGuide");
+    const quantityGuide = document.getElementById("quantityGuide");
+    const priceValue = document.getElementById("priceValue");
+    const quantityValue = document.getElementById("quantityValue");
+    const elasticityValue = document.getElementById("elasticityValue");
+    const elasticityLabel = document.getElementById("elasticityLabel");
+    const revenueValue = document.getElementById("revenueValue");
+    const grid = document.getElementById("mainGrid");
+    const zones = document.getElementById("elasticZones");
+
+    const chart = {
+      left: 70,
+      top: 50,
+      right: 650,
+      bottom: 450,
+      maxQ: 120,
+      maxP: 120
+    };
+
+    function sx(q) {
+      return chart.left + (q / chart.maxQ) * (chart.right - chart.left);
+    }
+
+    function sy(p) {
+      return chart.bottom - (p / chart.maxP) * (chart.bottom - chart.top);
+    }
+
+    function drawGrid() {
+      const ticks = [0, 30, 60, 90, 120];
+      ticks.forEach((tick) => {
+        if (tick > 0) {
+          const x = sx(tick);
+          const y = sy(tick);
+          grid.innerHTML += `<line class="grid-line" x1="${x}" y1="${chart.top}" x2="${x}" y2="${chart.bottom}"></line>`;
+          grid.innerHTML += `<line class="grid-line" x1="${chart.left}" y1="${y}" x2="${chart.right}" y2="${y}"></line>`;
+        }
+        grid.innerHTML += `<text class="small-label" x="${sx(tick) - 8}" y="${chart.bottom + 24}">${tick}</text>`;
+        grid.innerHTML += `<text class="small-label" x="${chart.left - 34}" y="${sy(tick) + 5}">${tick}</text>`;
+      });
+
+      zones.innerHTML = `
+        <text class="small-label" x="${sx(18)}" y="${sy(100)}">弾力的</text>
+        <text class="small-label" x="${sx(55)}" y="${sy(63)}">単位弾力的</text>
+        <text class="small-label" x="${sx(84)}" y="${sy(30)}">非弾力的</text>
+      `;
+    }
+
+    function update() {
+      const q = Number(slider.value);
+      const p = chart.maxP - q;
+      const e = Math.abs(p / q);
+      const x = sx(q);
+      const y = sy(p);
+
+      point.setAttribute("cx", x);
+      point.setAttribute("cy", y);
+      priceGuide.setAttribute("y1", y);
+      priceGuide.setAttribute("y2", y);
+      priceGuide.setAttribute("x2", x);
+      quantityGuide.setAttribute("x1", x);
+      quantityGuide.setAttribute("x2", x);
+      quantityGuide.setAttribute("y2", y);
+      pointText.setAttribute("x", Math.min(x + 12, chart.right - 110));
+      pointText.setAttribute("y", y - 12);
+      pointText.textContent = `P=${p}, Q=${q}`;
+
+      priceValue.textContent = p.toFixed(0);
+      quantityValue.textContent = q.toFixed(0);
+      elasticityValue.textContent = e.toFixed(2);
+
+      if (Math.abs(e - 1) < 0.05) {
+        elasticityLabel.textContent = "単位弾力的";
+        elasticityLabel.style.background = "#fff8ed";
+        elasticityLabel.style.color = "#8a4b0f";
+        revenueValue.textContent = "最大付近";
+      } else if (e > 1) {
+        elasticityLabel.textContent = "弾力的";
+        elasticityLabel.style.background = "#ecfdf3";
+        elasticityLabel.style.color = "#067647";
+        revenueValue.textContent = "増えやすい";
+      } else {
+        elasticityLabel.textContent = "非弾力的";
+        elasticityLabel.style.background = "#fff1f0";
+        elasticityLabel.style.color = "#b42318";
+        revenueValue.textContent = "減りやすい";
+      }
+    }
+
+    drawGrid();
+    update();
+    slider.addEventListener("input", update);
+
+    // 所得弾力性シミュレーター
+    const incomeSlider = document.getElementById("incomeSlider");
+    const etaSlider = document.getElementById("etaSlider");
+    const incomeChangeLabel = document.getElementById("incomeChangeLabel");
+    const etaLabel = document.getElementById("etaLabel");
+    const simIncome = document.getElementById("simIncome");
+    const simDemand = document.getElementById("simDemand");
+    const simEta = document.getElementById("simEta");
+    const simType = document.getElementById("simType");
+
+    function updateSim() {
+      const incomeChange = Number(incomeSlider.value);
+      const eta = Number(etaSlider.value) / 100;
+      const demandChange = incomeChange * eta;
+
+      const sign = incomeChange >= 0 ? "+" : "";
+      incomeChangeLabel.textContent = sign + incomeChange + "%";
+      etaLabel.textContent = eta.toFixed(2);
+
+      simIncome.textContent = sign + incomeChange + "%";
+      simDemand.textContent = (demandChange >= 0 ? "+" : "") + demandChange.toFixed(1) + "%";
+      simEta.textContent = eta.toFixed(2);
+
+      if (eta > 1) {
+        simType.textContent = "上級財（奢侈財）";
+        simType.style.color = "#16803c";
+      } else if (eta > 0) {
+        simType.textContent = "正常財（必需財）";
+        simType.style.color = "#2563eb";
+      } else if (eta === 0) {
+        simType.textContent = "中立財";
+        simType.style.color = "#0284c7";
+      } else {
+        simType.textContent = "劣等財（下級財）";
+        simType.style.color = "#c2410c";
+      }
+    }
+
+    updateSim();
+    incomeSlider.addEventListener("input", updateSim);
+    etaSlider.addEventListener("input", updateSim);
+  </script>
+</body>
+</html>
