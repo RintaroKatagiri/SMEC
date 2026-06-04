@@ -31,4 +31,5 @@ skills/
 
 ## PR ワークフロー
 
-PR は必ず upstream（`masakari3794/SMEC`）の `main` ブランチへ向けて作成する。
+- PR は必ず upstream（`masakari3794/SMEC`）の `main` ブランチへ向けて作成する。
+- 作業ブランチは作成せず、常に `main` ブランチ上で直接編集・コミットを行い、そのまま PR を作成する。
