@@ -1,6 +1,6 @@
 ---
 name: exam-question-drill
-description: Create challenging exam-style practice questions from user-specified subject materials. Use when the user asks in Japanese or English for mock questions, drills, quizzes, practice questions, past-exam-like questions, calculation drills, or continued study practice from a specified subject, folder, file, or exam domain such as 中小企業診断士, 第一次試験, 財務・会計, 企業経営理論, or 中小企業経営・中小企業政策. Prefer local study materials over general knowledge, ask one clarification when the target subject is unspecified, include calculation/table/journal-entry questions when the subject supports them, and generate original questions rather than copying source questions.
+description: Create challenging exam-style practice questions from local subject materials. Use when the user asks in Japanese or English for mock questions, drills, quizzes, practice questions, past-exam-like questions, calculation drills, or continued study practice from a specified subject, folder, file, or exam domain such as 中小企業診断士, 第一次試験, 財務・会計, 企業経営理論, or 中小企業経営・中小企業政策. Prefer local study materials over general knowledge, auto-select a local subject folder when the exam domain is clear but the subject is unspecified, include calculation/table/journal-entry questions when the subject supports them, and generate original questions rather than copying source questions.
 ---
 
 # Exam Question Drill
@@ -8,7 +8,8 @@ description: Create challenging exam-style practice questions from user-specifie
 ## Core Workflow
 
 1. Identify the exam, subject, folder, files, and topic range.
-   - If the user does not specify the subject or source range, ask one concise clarification before creating questions.
+   - If the user specifies an exam domain such as 中小企業診断士 or 第一次試験 but does not specify a subject folder, do not ask which `第一次試験/` folder to use. Auto-select one subject folder from the local `第一次試験/` directory, then rotate across available subject folders over subsequent questions.
+   - Ask one concise clarification only when neither an exam domain nor a usable local source range can be inferred.
    - If the user requests cross-subject practice, use only the subjects they explicitly name.
 2. Read the local materials for the specified subject before writing questions.
    - Prefer the user's Markdown notes, PDFs, folders, and repository materials over general knowledge.
@@ -25,6 +26,7 @@ description: Create challenging exam-style practice questions from user-specifie
 
 - Change the source file or clearly distinct subtopic for every new question by default.
 - Do not draw more than two consecutive questions from the same Markdown file, chapter, framework, or tightly related concept cluster.
+- When the user asks broadly for 第一次試験 practice without naming a subject, rotate across available `第一次試験/` subject folders instead of stopping to ask the user to choose one. Start from a subject that has local materials and then move to a different subject folder on the next broad-practice question unless the user asks to stay.
 - When a subject folder has many files, sample broadly across strategy, organization, human resources, labor law, marketing, and consumer behavior before returning to a recent area.
 - If the user has an open file or named topic, use it for the next question only when they explicitly request that topic; otherwise treat it as context, not a command to stay there.
 - Revisit missed concepts later, but change the surface form and separate the review by at least two unrelated questions when possible.
@@ -34,6 +36,7 @@ description: Create challenging exam-style practice questions from user-specifie
 
 - Treat the user's subject selection as binding.
 - Do not silently switch subjects.
+- If the user asks for broad 第一次試験, 中小企業診断士, mixed, random, or おまかせ practice without naming a subject, subject switching across local `第一次試験/` folders is expected and should be announced in the question header.
 - If the user says `企業経営理論`, use only that folder or files unless they request mixed practice.
 - If the user later switches subjects, reset recent-topic rotation for the new subject.
 - If a requested topic cannot be found locally, say so and ask whether to use web research or another source.
