@@ -16,7 +16,8 @@ description: Create challenging exam-style practice questions from local subject
    - Prefer the user's Markdown notes, PDFs, folders, and repository materials over general knowledge.
    - In this repository, first check `第一次試験/` and its subject folders when the user asks about 中小企業診断士 or first-stage exam practice.
    - Track recently used subject folders, files, topics, and concepts in conversation. Rotate source files for each new question and avoid repeating the same small topic unless reviewing mistakes.
-3. If the user asks for 本試験風, 過去問風, actual-exam level, or similar, use the local materials plus the pattern guidance in `references/past-exam-style.md`.
+3. For 中小企業診断士 第一次試験 practice, apply the durable pattern guidance in `references/past-exam-style.md` so questions resemble real first-stage exam structure without browsing every time.
+   - Read `references/past-exam-style.md` at the start of a new drill session, after the skill has been updated, or when the user asks for 本試験風, 過去問風, actual-exam level, or similar.
    - If current official rules, laws, or past-exam facts are needed and are not in the local materials, browse official or credible sources before relying on them.
    - Do not reproduce copyrighted question text. Extract only structure, difficulty, reasoning pattern, distractor style, and topic distribution, then write original questions.
 4. For calculation-heavy subjects such as 財務・会計, explicitly choose whether the next question is conceptual, calculation, table interpretation, or journal-entry treatment before writing it, using the recent question mix rather than overcorrecting to one type.
