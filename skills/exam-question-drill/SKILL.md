@@ -8,13 +8,14 @@ description: Create challenging exam-style practice questions from local subject
 ## Core Workflow
 
 1. Identify the exam, subject, folder, files, and topic range.
+   - Classify the request scope before choosing sources: explicit file/topic, explicit subject/folder, or broad exam/random practice.
    - If the user specifies an exam domain such as 中小企業診断士 or 第一次試験 but does not specify a subject folder, do not ask which `第一次試験/` folder to use. Auto-select one subject folder from the local `第一次試験/` directory, then rotate across available subject folders over subsequent questions.
    - Ask one concise clarification only when neither an exam domain nor a usable local source range can be inferred.
    - If the user requests cross-subject practice, use only the subjects they explicitly name.
 2. Read the local materials for the specified subject before writing questions.
    - Prefer the user's Markdown notes, PDFs, folders, and repository materials over general knowledge.
    - In this repository, first check `第一次試験/` and its subject folders when the user asks about 中小企業診断士 or first-stage exam practice.
-   - Track recently used files, topics, and concepts in conversation. Rotate source files for each new question and avoid repeating the same small topic unless reviewing mistakes.
+   - Track recently used subject folders, files, topics, and concepts in conversation. Rotate source files for each new question and avoid repeating the same small topic unless reviewing mistakes.
 3. If the user asks for 本試験風, 過去問風, actual-exam level, or similar, use the local materials plus the pattern guidance in `references/past-exam-style.md`.
    - If current official rules, laws, or past-exam facts are needed and are not in the local materials, browse official or credible sources before relying on them.
    - Do not reproduce copyrighted question text. Extract only structure, difficulty, reasoning pattern, distractor style, and topic distribution, then write original questions.
@@ -24,19 +25,22 @@ description: Create challenging exam-style practice questions from local subject
 
 ## Topic Rotation
 
-- Change the source file or clearly distinct subtopic for every new question by default.
+- Change the source file or clearly distinct subtopic for every new question by default, and announce the selected subject/file in the question header when rotation is active.
 - Do not draw more than two consecutive questions from the same Markdown file, chapter, framework, or tightly related concept cluster.
-- When the user asks broadly for 第一次試験 practice without naming a subject, rotate across available `第一次試験/` subject folders instead of stopping to ask the user to choose one. Start from a subject that has local materials and then move to a different subject folder on the next broad-practice question unless the user asks to stay.
+- If the user only has an open file or named topic as context, use that source for the first question at most, then rotate to another file in the same subject folder. After one or two questions in that folder, widen to another `第一次試験/` subject folder unless the user asks to stay in the subject.
+- When the user asks broadly for 第一次試験 practice without naming a subject, rotate across available `第一次試験/` subject folders instead of stopping to ask the user to choose one. Start from a subject that has local materials, then move to a different subject folder after one or two questions unless the user asks to stay.
 - When a subject folder has many files, sample broadly across strategy, organization, human resources, labor law, marketing, and consumer behavior before returning to a recent area.
-- If the user has an open file or named topic, use it for the next question only when they explicitly request that topic; otherwise treat it as context, not a command to stay there.
+- If a folder has multiple eligible files, choose randomly from files that have not been used recently. Exclude the current file when a different file is available.
+- If the user has an open file or named topic, use it for the next question only when they explicitly request that topic or no broader source has been established; otherwise treat it as context, not a command to stay there.
 - Revisit missed concepts later, but change the surface form and separate the review by at least two unrelated questions when possible.
-- If the user asks for more variety, immediately switch to a different file and different conceptual area, then continue rotating.
+- If the user asks for more variety or points out repetition, immediately switch to a different file; for broad exam practice, also switch to a different subject folder.
 
 ## Subject Control
 
 - Treat the user's subject selection as binding.
 - Do not silently switch subjects.
 - If the user asks for broad 第一次試験, 中小企業診断士, mixed, random, or おまかせ practice without naming a subject, subject switching across local `第一次試験/` folders is expected and should be announced in the question header.
+- If the user specifies a subject folder such as 経営法務, rotate within that folder and do not switch to another subject folder unless the user asks for mixed, random, or broad exam practice.
 - If the user says `企業経営理論`, use only that folder or files unless they request mixed practice.
 - If the user later switches subjects, reset recent-topic rotation for the new subject.
 - If a requested topic cannot be found locally, say so and ask whether to use web research or another source.
