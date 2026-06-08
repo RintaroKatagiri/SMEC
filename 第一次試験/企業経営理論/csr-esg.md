@@ -1,4 +1,4 @@
-# CSR（企業の社会的責任）・ESG（Environmant・Social・Goverment）
+# CSR（企業の社会的責任）・ESG（Environment・Social・Governance）
 
 ## CSR（[参考文献](https://www.bk.mufg.jp/soudan/shisan/lp/column/96.html)）
 
@@ -65,7 +65,7 @@
 - 企業の意思決定や管理体制の健全性
 - 具体的な取り組み
   - 経営の透明性を確保する情報開示
-  - 社外取締役の都用による監督機能の強化
+  - 社外取締役の登用による監督機能の強化
   - コンプライアンスの徹底
   - リスクマネジメント体制の構築など
 
