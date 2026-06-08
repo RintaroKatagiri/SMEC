@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>等費用線と等産出量曲線</title>
+<style>
+  body { font-family: sans-serif; background: #f9f9f9; margin: 20px; }
+  h2 { color: #333; }
+  .container { display: flex; gap: 30px; align-items: flex-start; flex-wrap: wrap; }
+  .legend { background: white; border: 1px solid #ccc; padding: 16px; border-radius: 8px; min-width: 240px; }
+  .legend h3 { margin: 0 0 10px; font-size: 14px; color: #555; }
+  .legend-item { display: flex; align-items: center; gap: 8px; margin: 6px 0; font-size: 13px; }
+  .line { width: 32px; height: 3px; }
+  .note { background: #fff8e1; border-left: 4px solid #f9a825; padding: 10px 14px; margin-top: 16px; font-size: 13px; line-height: 1.6; border-radius: 4px; max-width: 640px; }
+  .note strong { color: #e65100; }
+</style>
+</head>
+<body>
+<h2>等費用線と等産出量曲線</h2>
+<div class="container">
+<svg width="560" height="500" style="background:white;border:1px solid #ddd;border-radius:8px;">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#333"/>
+    </marker>
+  </defs>
+
+  <!-- 軸 -->
+  <line x1="70" y1="460" x2="70" y2="20" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="70" y1="460" x2="530" y2="460" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="55" y="15" font-size="14" fill="#333">K</text>
+  <text x="30" y="25" font-size="11" fill="#666">（資本量）</text>
+  <text x="535" y="465" font-size="14" fill="#333">L</text>
+  <text x="505" y="478" font-size="11" fill="#666">（労働量）</text>
+  <text x="55" y="465" font-size="13" fill="#333">O</text>
+
+  <!-- 等費用線 C₀ (K + L = 5, 傾き-1): (70,270)→(320,460) -->
+  <!-- スケール: 70px + 50px/unit. K=5 → y=460-5*50=210? -->
+  <!-- 座標系: svgX=70+L*50, svgY=460-K*50 -->
+  <!-- C₀: K=5 at L=0 → (70,210); L=5 at K=0 → (320,460) -->
+  <!-- C₁: K=8 at L=0 → (70,60); L=8 at K=0 → (470,460) -->
+
+  <!-- Y軸上の切片ラベル -->
+  <text x="42" y="215" font-size="13" fill="#1565c0" font-weight="bold">C₀</text>
+  <line x1="66" y1="210" x2="74" y2="210" stroke="#1565c0" stroke-width="1.5"/>
+  <text x="42" y="65" font-size="13" fill="#1565c0" font-weight="bold">C₁</text>
+  <line x1="66" y1="60" x2="74" y2="60" stroke="#1565c0" stroke-width="1.5"/>
+
+  <!-- X軸上の切片ラベル -->
+  <text x="312" y="478" font-size="13" fill="#1565c0" font-weight="bold">C₀</text>
+  <line x1="320" y1="456" x2="320" y2="464" stroke="#1565c0" stroke-width="1.5"/>
+  <text x="462" y="478" font-size="13" fill="#1565c0" font-weight="bold">C₁</text>
+  <line x1="470" y1="456" x2="470" y2="464" stroke="#1565c0" stroke-width="1.5"/>
+
+  <!-- 等費用線 C₀: from (70,210) to (320,460) -->
+  <line x1="70" y1="210" x2="320" y2="460" stroke="#1565c0" stroke-width="2" stroke-dasharray="6,3"/>
+
+  <!-- 等費用線 C₁: from (70,60) to (470,460) -->
+  <line x1="70" y1="60" x2="470" y2="460" stroke="#1565c0" stroke-width="2"/>
+
+  <!-- 等産出量曲線 Q₀: KL=6.25 → K=6.25/L
+       L=1→K=6.25: (120,147); L=1.5→K=4.17:(145,252); L=2→K=3.13:(170,303);
+       L=2.5→K=2.5:(195,335)=G; L=3→K=2.08:(220,356); L=4→K=1.56:(270,382); L=5→K=1.25:(320,397) -->
+  <path d="M120,147 Q145,252 170,303 Q185,320 195,335 Q210,346 220,356 Q245,369 270,382 Q295,390 320,397"
+        stroke="#2e7d32" stroke-width="2.5" fill="none" stroke-dasharray="7,3"/>
+
+  <!-- 等産出量曲線 Q₁: KL=16 → K=16/L
+       L=2→K=8:(170,60); L=2.5→K=6.4:(195,140); L=3→K=5.33:(220,193);
+       L=4→K=4:(270,260)=D; L=5→K=3.2:(320,300); L=6→K=2.67:(370,327)=E;
+       L=7→K=2.29:(420,345); L=8→K=2:(470,360) -->
+  <path d="M170,60 Q195,140 220,193 Q245,227 270,260 Q295,281 320,300 Q345,315 370,327 Q395,337 420,345 Q445,353 470,360"
+        stroke="#2e7d32" stroke-width="2.5" fill="none"/>
+
+  <!-- Q₀ ラベル -->
+  <text x="325" y="393" font-size="13" fill="#2e7d32" font-weight="bold">Q₀</text>
+
+  <!-- Q₁ ラベル -->
+  <text x="475" y="358" font-size="13" fill="#2e7d32" font-weight="bold">Q₁</text>
+
+  <!-- 点 D = C₁とQ₁の接点: L=4, K=4 → (270,260) -->
+  <circle cx="270" cy="260" r="6" fill="#d32f2f"/>
+  <text x="278" y="252" font-size="14" fill="#d32f2f" font-weight="bold">D</text>
+
+  <!-- 点 G = C₀とQ₀の接点: L=2.5, K=2.5 → (195,335) -->
+  <circle cx="195" cy="335" r="6" fill="#7b1fa2"/>
+  <text x="200" y="328" font-size="14" fill="#7b1fa2" font-weight="bold">G</text>
+
+  <!-- 点 E = Q₁上・非接点: L=6, K=2.67 → (370,327) -->
+  <circle cx="370" cy="327" r="6" fill="#e65100"/>
+  <text x="378" y="322" font-size="14" fill="#e65100" font-weight="bold">E</text>
+
+  <!-- 点 F = C₁上・L=7,K=1: (420,410) -->
+  <!-- L=7: x=70+7*50=420; K=1: y=460-1*50=410 -->
+  <circle cx="420" cy="410" r="6" fill="#00796b"/>
+  <text x="428" y="408" font-size="14" fill="#00796b" font-weight="bold">F</text>
+
+  <!-- 拡張経路（G→D方向の矢印） -->
+  <line x1="200" y1="330" x2="263" y2="267" stroke="#999" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+  <text x="215" y="295" font-size="11" fill="#777">拡張経路</text>
+
+  <!-- 凡例タイトル -->
+  <text x="90" y="40" font-size="12" fill="#666">（傾き = −w/r）</text>
+</svg>
+
+<div>
+  <div class="legend">
+    <h3>凡例</h3>
+    <div class="legend-item">
+      <div class="line" style="background:#1565c0;"></div>
+      <span>等費用線 C₁（外側・高費用）</span>
+    </div>
+    <div class="legend-item">
+      <div class="line" style="background:#1565c0;border-top:3px dashed #1565c0;background:none;"></div>
+      <span>等費用線 C₀（内側・低費用）</span>
+    </div>
+    <div class="legend-item">
+      <div class="line" style="background:#2e7d32;"></div>
+      <span>等量曲線 Q₁（外側・高産出）</span>
+    </div>
+    <div class="legend-item">
+      <div class="line" style="background:#2e7d32;border-top:3px dashed #2e7d32;background:none;"></div>
+      <span>等量曲線 Q₀（内側・低産出）</span>
+    </div>
+    <hr/>
+    <div class="legend-item"><span style="color:#d32f2f;font-weight:bold">●D</span><span>C₁ と Q₁ の接点（最適点）MRTS=w/r</span></div>
+    <div class="legend-item"><span style="color:#7b1fa2;font-weight:bold">●G</span><span>C₀ と Q₀ の接点（最適点）MRTS=w/r</span></div>
+    <div class="legend-item"><span style="color:#e65100;font-weight:bold">●E</span><span>Q₁ 上・非接点（費用 > D）</span></div>
+    <div class="legend-item"><span style="color:#00796b;font-weight:bold">●F</span><span>C₁ 上・非最適点（産出 < Q₁）</span></div>
+  </div>
+
+  <div class="note">
+    <strong>接点（最適条件）:</strong> MRTS = w/r<br>
+    D・G は同じ傾き（w/r）の等費用線に接する → <strong>MRTS が等しい</strong><br><br>
+    <strong>E vs D:</strong> 同じ Q₁ 上だが E は非接点<br>
+    → E の費用 > D の費用（D が Q₁ の最小費用点）<br><br>
+    <strong>F → D への移動:</strong> C₁ 上で L 減・K 増<br>
+    → より高い等量曲線（Q₁）へ到達 → 産出増・利潤増
+  </div>
+</div>
+</div>
+</body>
+</html>

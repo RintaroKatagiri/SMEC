@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>労働市場均衡（第20問）</title>
+<style>
+  body { font-family: sans-serif; background: #f9f9f9; margin: 20px; }
+  h2 { color: #333; }
+  .container { display: flex; gap: 30px; align-items: flex-start; flex-wrap: wrap; }
+  .legend { background: white; border: 1px solid #ccc; padding: 16px; border-radius: 8px; min-width: 270px; }
+  .legend h3 { margin: 0 0 10px; font-size: 14px; color: #555; }
+  .legend-item { margin: 7px 0; font-size: 13px; line-height: 1.5; }
+  .note { background: #e3f2fd; border-left: 4px solid #1565c0; padding: 10px 14px; margin-top: 12px; font-size: 13px; line-height: 1.7; border-radius: 4px; }
+  .note strong { color: #0d47a1; }
+  table { border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+  td, th { border: 1px solid #ccc; padding: 5px 8px; }
+  th { background: #e3f2fd; }
+</style>
+</head>
+<body>
+<h2>労働市場均衡（第20問）</h2>
+<div class="container">
+<svg width="560" height="520" style="background:white;border:1px solid #ddd;border-radius:8px;">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#333"/>
+    </marker>
+  </defs>
+
+  <!-- 座標系: svgX=90+N*60, svgY=480-W*56 -->
+  <!-- N(労働量)範囲: 0~7, W(賃金率)範囲: 0~8 -->
+  <!-- D(労働需要): W=8-N → N=0,W=8:(90,32); N=8,W=0:(570,480) -->
+  <!-- S(労働供給): W=N → N=0,W=0:(90,480); N=8,W=8:(570,32) -->
+  <!-- 均衡: 8-N=N → N=4,W=4 → svgX=90+4*60=330, svgY=480-4*56=256 -->
+  <!-- A = D 切片 W=8: (90,32) → Y軸上 -->
+  <!-- B = S 切片 W=0: (90,480) だがW=0は原点 -->
+  <!-- Let me use: S starting from (90,480) = (N=0,W=0) but with label B at low W level -->
+  <!-- Actually from image: A is on Y-axis above W₀; B is on Y-axis below W₀ -->
+  <!-- A = D curve Y-intercept = 8, B = S curve Y-intercept = 0? -->
+  <!-- In image, B is on Y-axis as a positive W value... let me set S: W=1+N (doesn't start at origin) -->
+  <!-- S: W=1+N → W=0 requires N=-1, so at N=0, W=1 → (90,424) -->
+  <!-- B = S intercept = 1 on Y-axis -->
+  <!-- Equilibrium: 8-N = 1+N → 7=2N → N=3.5, W=4.5 → (300,228) -->
+
+  <!-- 労働者余剰（三角形 AW₀E）: above W₀=4.5, below D, from N=0 to N=3.5 -->
+  <!-- A=(90,32), E=(300,228), W₀ on Y-axis at W=4.5=(90,228) -->
+  <polygon points="90,32 300,228 90,228" fill="#bbdefb" opacity="0.7"/>
+
+  <!-- 企業余剰（三角形 W₀BE）: below W₀=4.5, above S, from N=0 to N=3.5 -->
+  <!-- W₀=(90,228), E=(300,228), B=(90,424) -->
+  <polygon points="90,228 300,228 90,424" fill="#c8e6c9" opacity="0.7"/>
+
+  <!-- 労働者の機会費用（四角形/三角形 AON₀E）: S 曲線の下の面積 from 0 to N₀ -->
+  <!-- S from B=(90,424) to E=(300,228): area under S = trapezoid B,(90,480),N₀,E -->
+  <!-- 機会費用 = ∫₀^N₀ S(N)dN = triangle below S = area (90,424)→(300,480)→(300,228)? no -->
+  <!-- 機会費用 = area below S curve from O to N₀ -->
+  <!-- = rectangle W=0 × N₀ up to S curve = trapezoid (90,480)→(300,480)→(300,228)→(90,424) -->
+  <polygon points="90,424 90,480 300,480 300,228" fill="#fff9c4" opacity="0.6"/>
+
+  <!-- 軸 -->
+  <line x1="90" y1="480" x2="90" y2="20" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="90" y1="480" x2="540" y2="480" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="65" y="15" font-size="14" fill="#333">賃金率</text>
+  <text x="543" y="485" font-size="14" fill="#333">労働量</text>
+  <text x="72" y="486" font-size="13" fill="#333">O</text>
+
+  <!-- 労働供給曲線 S: from (90,424) to (450,200) (W=1+N) -->
+  <!-- N=0,W=1:(90,424); N=3.5,W=4.5:(300,228); N=6,W=7:(450,88); N=7,W=8:(510,32) -->
+  <line x1="90" y1="424" x2="510" y2="32" stroke="#f57f17" stroke-width="2.5"/>
+  <text x="512" y="30" font-size="14" fill="#f57f17" font-weight="bold">S</text>
+
+  <!-- 労働需要曲線 D: from (90,32) to (510,480) (W=8-N) -->
+  <!-- N=0,W=8:(90,32); N=3.5,W=4.5:(300,228); N=7,W=1:(510,424) -->
+  <line x1="90" y1="32" x2="510" y2="480" stroke="#1565c0" stroke-width="2.5"/>
+  <text x="512" y="480" font-size="14" fill="#1565c0" font-weight="bold">D</text>
+
+  <!-- Y軸ラベル -->
+  <!-- A = D 切片 W=8: y=32 -->
+  <line x1="86" y1="32" x2="94" y2="32" stroke="#333" stroke-width="1.5"/>
+  <text x="72" y="37" font-size="14" fill="#333" font-weight="bold">A</text>
+
+  <!-- W₀ = 均衡賃金 = 4.5: y=228 -->
+  <line x1="86" y1="228" x2="94" y2="228" stroke="#333" stroke-width="1.5"/>
+  <text x="64" y="233" font-size="13" fill="#333" font-weight="bold">W₀</text>
+
+  <!-- B = S 切片 W=1: y=424 -->
+  <line x1="86" y1="424" x2="94" y2="424" stroke="#333" stroke-width="1.5"/>
+  <text x="72" y="429" font-size="14" fill="#333" font-weight="bold">B</text>
+
+  <!-- 均衡点 E: N=3.5, W=4.5 → (300, 228) -->
+  <circle cx="300" cy="228" r="7" fill="#d32f2f"/>
+  <line x1="300" y1="228" x2="300" y2="480" stroke="#555" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="90" y1="228" x2="300" y2="228" stroke="#555" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="308" y="224" font-size="15" fill="#d32f2f" font-weight="bold">E</text>
+
+  <!-- N₀ ラベル -->
+  <line x1="296" y1="476" x2="304" y2="476" stroke="#555" stroke-width="2"/>
+  <text x="289" y="494" font-size="13" fill="#333" font-weight="bold">N₀</text>
+
+  <!-- 余剰ラベル -->
+  <text x="115" y="120" font-size="12" fill="#1565c0" font-weight="bold">労働者余剰</text>
+  <text x="113" y="135" font-size="12" fill="#1565c0">△AW₀E</text>
+
+  <text x="115" y="320" font-size="12" fill="#2e7d32" font-weight="bold">企業余剰</text>
+  <text x="113" y="335" font-size="12" fill="#2e7d32">△W₀BE</text>
+
+  <text x="155" y="440" font-size="12" fill="#f57f17" font-weight="bold">機会費用</text>
+  <text x="155" y="455" font-size="12" fill="#f57f17">四角形AON₀E</text>
+
+  <!-- 企業の労働費用: 四角形 W₀ON₀E の別ラベル -->
+  <!-- W₀ON₀E: (90,228)→(90,480)→(300,480)→(300,228) -->
+  <!-- これは労働費用=W₀×N₀ -->
+</svg>
+
+<div>
+  <div class="legend">
+    <h3>凡例</h3>
+    <div class="legend-item" style="color:#1565c0"><strong>D</strong>: 労働需要曲線（右下がり、MRP = P × MP_L）</div>
+    <div class="legend-item" style="color:#f57f17"><strong>S</strong>: 労働供給曲線（右上がり）</div>
+    <div class="legend-item" style="color:#d32f2f"><strong>●E</strong>: 均衡点（W₀, N₀）</div>
+    <hr/>
+    <div class="legend-item" style="background:#bbdefb;padding:3px;border-radius:3px">■ 労働者余剰 = △AW₀E（D曲線上、W₀より上）</div>
+    <div class="legend-item" style="background:#c8e6c9;padding:3px;border-radius:3px">■ 企業余剰 = △W₀BE（S曲線上、W₀より下）</div>
+    <div class="legend-item" style="background:#fff9c4;padding:3px;border-radius:3px">■ 機会費用 = 四角形AON₀E（S曲線下面積）</div>
+  </div>
+
+  <table>
+    <tr><th>選択肢</th><th>内容</th><th>正誤</th></tr>
+    <tr><td>設問2-a</td><td>労働者余剰 = △AW₀E</td><td>正</td></tr>
+    <tr><td>設問2-b</td><td>機会費用 = 四角形AON₀E</td><td>正</td></tr>
+    <tr><td>設問2-c</td><td>企業の労働費用 = 四角形W₀ON₀E</td><td>正</td></tr>
+    <tr><td>設問2-d</td><td>企業余剰 = △AW₀E</td><td>誤（△AW₀Eは労働者余剰）</td></tr>
+  </table>
+
+  <div class="note">
+    <strong>均衡賃金が上昇する要因:</strong><br>
+    D 右シフト（需要増）: 資本増加、補完技術進歩<br>
+    S 左シフト（供給減）: 少子化、高齢化<br><br>
+    <strong>設問1 正答: ア（a と c）</strong><br>
+    a: 補完技術向上 → MRP 上昇 → D 右シフト → W 上昇 ✓<br>
+    c: 資本投入量増加 → 労働の MRP 上昇 → D 右シフト → W 上昇 ✓
+  </div>
+</div>
+</div>
+</body>
+</html>

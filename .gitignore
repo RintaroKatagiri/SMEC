@@ -1,2 +1,4 @@
 *.png
 /.claude/settings.local.json
+*.jpg
+*.heic

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>独占市場均衡（第17問）</title>
+<style>
+  body { font-family: sans-serif; background: #f9f9f9; margin: 20px; }
+  h2 { color: #333; }
+  .container { display: flex; gap: 30px; align-items: flex-start; flex-wrap: wrap; }
+  .legend { background: white; border: 1px solid #ccc; padding: 16px; border-radius: 8px; min-width: 260px; }
+  .legend h3 { margin: 0 0 10px; font-size: 14px; color: #555; }
+  .legend-item { margin: 6px 0; font-size: 13px; line-height: 1.5; }
+  .note { background: #fce4ec; border-left: 4px solid #e91e63; padding: 10px 14px; margin-top: 12px; font-size: 13px; line-height: 1.7; border-radius: 4px; }
+  .note strong { color: #880e4f; }
+  table { border-collapse: collapse; font-size: 12px; margin-top: 12px; width: 100%; }
+  td, th { border: 1px solid #ccc; padding: 5px 8px; }
+  th { background: #fce4ec; }
+</style>
+</head>
+<body>
+<h2>独占市場均衡（第17問）</h2>
+<div class="container">
+<svg width="560" height="520" style="background:white;border:1px solid #ddd;border-radius:8px;">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#333"/>
+    </marker>
+  </defs>
+
+  <!-- 座標系: svgX=80+Q*52, svgY=490-P*48 -->
+  <!-- Q範囲: 0~8.5, P範囲: 0~9 -->
+  <!-- D: P=9-Q → Q=0,P=9:(80,58); Q=9,P=0:(548,490) -->
+  <!-- MR: P=9-2Q → Q=0,P=9:(80,58); Q=4.5,P=0:(314,490) -->
+  <!-- MC: 上り直線 P=1+Q → Q=0,P=1:(80,442); Q=8,P=9:(496,58) -->
+
+  <!-- 消費者余剰（三角形 ABF）の塗りつぶし -->
+  <!-- A=(0,9):y=58; B=(価格Bのy); F=(Qm, Pm) -->
+  <!-- Monopoly: MR=MC → 9-2Q=1+Q → 8=3Q → Q=8/3≈2.67, P=9-2.67=6.33 -->
+  <!-- Q_m=8/3: svgX=80+2.67*52=219 -->
+  <!-- P_m=6.33: svgY=490-6.33*48=186 -->
+  <!-- MC(Q_m)=1+2.67=3.67: svgY=490-3.67*48=314 -->
+  <!-- A=(0,9)→(80,58); B=(P_m=6.33)→y=186; F=(Q_m,P_m)→(219,186) -->
+  <polygon points="80,58 80,186 219,186" fill="#e3f2fd" opacity="0.8"/>
+  <text x="100" y="130" font-size="11" fill="#1565c0" font-weight="bold">消費者余剰</text>
+  <text x="95" y="143" font-size="11" fill="#1565c0">△ABF</text>
+
+  <!-- 生産者余剰（四角形 BCGF）の塗りつぶし -->
+  <!-- B=P_m=6.33→y=186; C=MC(Q_m)=3.67→y=314; G=MR=MC点→(219,314); F=(219,186) -->
+  <polygon points="80,186 219,186 219,314 80,314" fill="#e8f5e9" opacity="0.8"/>
+  <text x="95" y="255" font-size="11" fill="#2e7d32" font-weight="bold">生産者余剰</text>
+  <text x="92" y="267" font-size="11" fill="#2e7d32">四角形BCGF</text>
+
+  <!-- 死荷重（三角形 FGI）の塗りつぶし -->
+  <!-- F=(219,186); G=(219,314); I=MC=D交点: 1+Q=9-Q→2Q=8→Q=4,P=5 → (288,250) -->
+  <polygon points="219,186 219,314 288,250" fill="#fff9c4" opacity="0.9"/>
+  <text x="225" y="258" font-size="11" fill="#f57f17" font-weight="bold">DWL</text>
+  <text x="222" y="270" font-size="11" fill="#f57f17">△FGI</text>
+
+  <!-- 軸 -->
+  <line x1="80" y1="490" x2="80" y2="30" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="80" y1="490" x2="540" y2="490" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="62" y="25" font-size="14" fill="#333">価格</text>
+  <text x="543" y="495" font-size="14" fill="#333">数量</text>
+  <text x="62" y="496" font-size="13" fill="#333">O</text>
+
+  <!-- 需要曲線 D: P=9-Q, Q=0→P=9:(80,58), Q=9→P=0:(548,490) -->
+  <line x1="80" y1="58" x2="548" y2="490" stroke="#1565c0" stroke-width="2.5"/>
+  <text x="542" y="488" font-size="14" fill="#1565c0" font-weight="bold">D</text>
+
+  <!-- MR曲線: P=9-2Q, Q=0→P=9:(80,58), Q=4.5→P=0:(314,490) -->
+  <line x1="80" y1="58" x2="314" y2="490" stroke="#7b1fa2" stroke-width="2.5"/>
+  <text x="316" y="490" font-size="14" fill="#7b1fa2" font-weight="bold">MR</text>
+
+  <!-- MC曲線: P=1+Q 上り直線, Q=0→P=1:(80,442), Q=8→P=9:(496,58) -->
+  <line x1="80" y1="442" x2="496" y2="58" stroke="#c62828" stroke-width="2.5"/>
+  <text x="498" y="56" font-size="14" fill="#c62828" font-weight="bold">MC</text>
+
+  <!-- Y軸ラベル -->
+  <!-- A: P=9 → y=58 (D の縦軸切片) -->
+  <line x1="76" y1="58" x2="84" y2="58" stroke="#333" stroke-width="1.5"/>
+  <text x="62" y="63" font-size="14" fill="#333" font-weight="bold">A</text>
+
+  <!-- B: P_m=6.33 → y=186 (独占価格) -->
+  <line x1="76" y1="186" x2="84" y2="186" stroke="#333" stroke-width="1.5"/>
+  <text x="62" y="191" font-size="14" fill="#333" font-weight="bold">B</text>
+
+  <!-- C: MC at Q_m = 3.67 → y=314 -->
+  <line x1="76" y1="314" x2="84" y2="314" stroke="#333" stroke-width="1.5"/>
+  <text x="62" y="319" font-size="14" fill="#333" font-weight="bold">C</text>
+
+  <!-- E: MC の縦軸切片 P=1 → y=442 -->
+  <line x1="76" y1="442" x2="84" y2="442" stroke="#333" stroke-width="1.5"/>
+  <text x="62" y="447" font-size="14" fill="#333" font-weight="bold">E</text>
+
+  <!-- 点 F: 独占均衡 (Q_m=2.67, P_m=6.33) → (219,186) -->
+  <circle cx="219" cy="186" r="6" fill="#1565c0"/>
+  <line x1="219" y1="186" x2="219" y2="490" stroke="#555" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="80" y1="186" x2="219" y2="186" stroke="#555" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="224" y="182" font-size="14" fill="#1565c0" font-weight="bold">F</text>
+
+  <!-- 点 G: MR=MC の交点 (Q_m=2.67, MC=3.67) → (219,314) -->
+  <circle cx="219" cy="314" r="6" fill="#c62828"/>
+  <line x1="80" y1="314" x2="219" y2="314" stroke="#555" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="224" y="320" font-size="14" fill="#c62828" font-weight="bold">G</text>
+
+  <!-- 点 H: MR曲線上の G の下（Q_m, MR=MC=C level）はGと同じ点なのでHはGの近く -->
+  <!-- H は通常 MR 上の点: Q=Q_m=2.67, MR=3.67... G と同じ点になる -->
+
+  <!-- 点 I: MC=D の交点 (Q=4, P=5) → (288,250) -->
+  <circle cx="288" cy="250" r="6" fill="#f57f17"/>
+  <text x="293" y="246" font-size="14" fill="#f57f17" font-weight="bold">I</text>
+
+  <!-- Q軸ラベル: Q_m の下 -->
+  <line x1="219" y1="486" x2="219" y2="494" stroke="#555" stroke-width="2"/>
+  <text x="207" y="506" font-size="12" fill="#555">Q_m</text>
+
+  <!-- 競争均衡量 -->
+  <line x1="288" y1="486" x2="288" y2="494" stroke="#f57f17" stroke-width="2"/>
+  <text x="275" y="506" font-size="12" fill="#f57f17">Q_c</text>
+</svg>
+
+<div>
+  <div class="legend">
+    <h3>凡例</h3>
+    <div class="legend-item" style="color:#1565c0"><strong>D</strong>: 需要曲線（右下がり）</div>
+    <div class="legend-item" style="color:#7b1fa2"><strong>MR</strong>: 限界収入（MR &lt; P 常に成立）</div>
+    <div class="legend-item" style="color:#c62828"><strong>MC</strong>: 限界費用（右上がり）</div>
+    <hr/>
+    <div class="legend-item"><span style="color:#1565c0;font-weight:bold">●F</span>: 独占均衡点（D 上, 独占価格 B）</div>
+    <div class="legend-item"><span style="color:#c62828;font-weight:bold">●G</span>: MR=MC 交点（利潤最大化条件）</div>
+    <div class="legend-item"><span style="color:#f57f17;font-weight:bold">●I</span>: 完全競争均衡（MC=D）</div>
+    <hr/>
+    <div class="legend-item" style="background:#e3f2fd;padding:3px 6px;border-radius:3px">■ 消費者余剰 = △ABF</div>
+    <div class="legend-item" style="background:#e8f5e9;padding:3px 6px;border-radius:3px">■ 生産者余剰 = 四角形BCGF</div>
+    <div class="legend-item" style="background:#fff9c4;padding:3px 6px;border-radius:3px">■ 死荷重(DWL) = △FGI</div>
+  </div>
+
+  <table>
+    <tr><th>選択肢</th><th>正誤</th><th>理由</th></tr>
+    <tr><td>a: 価格=C で利潤最大化</td><td>誤</td><td>C は MC の値。利潤最大は MR=MC → 価格は B</td></tr>
+    <tr><td>b: 消費者余剰 = △ABF</td><td>正</td><td>A（D の切片）→B（独占価格）→F</td></tr>
+    <tr><td>c: 生産者余剰 = 四角形CEHG</td><td>誤</td><td>正しくは 四角形BCGF (B-C の高さ×独占量)</td></tr>
+    <tr><td>d: 死荷重 = △FGI</td><td>正</td><td>独占→競争の資源配分改善余地</td></tr>
+  </table>
+
+  <div class="note">
+    <strong>独占の最重要ポイント:</strong><br>
+    MR = MC で量を決める → D 曲線で価格を読む<br>
+    → 独占価格 B &gt; MC(=C) → 死荷重発生
+  </div>
+</div>
+</div>
+</body>
+</html>

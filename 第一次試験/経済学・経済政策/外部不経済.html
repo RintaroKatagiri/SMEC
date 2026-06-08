@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>外部不経済（第18問）</title>
+<style>
+  body { font-family: sans-serif; background: #f9f9f9; margin: 20px; }
+  h2 { color: #333; }
+  .container { display: flex; gap: 30px; align-items: flex-start; flex-wrap: wrap; }
+  .legend { background: white; border: 1px solid #ccc; padding: 16px; border-radius: 8px; min-width: 260px; }
+  .legend h3 { margin: 0 0 10px; font-size: 14px; color: #555; }
+  .legend-item { margin: 6px 0; font-size: 13px; line-height: 1.5; }
+  .note { background: #e8f5e9; border-left: 4px solid #388e3c; padding: 10px 14px; margin-top: 12px; font-size: 13px; line-height: 1.7; border-radius: 4px; }
+  .note strong { color: #1b5e20; }
+</style>
+</head>
+<body>
+<h2>外部不経済（負の外部性）（第18問）</h2>
+<div class="container">
+<svg width="560" height="520" style="background:white;border:1px solid #ddd;border-radius:8px;">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#333"/>
+    </marker>
+  </defs>
+
+  <!-- 座標系: svgX=90+Q*58, svgY=480-P*52 -->
+  <!-- Q範囲: 0~7, P範囲: 0~8 -->
+  <!-- S（供給）: P=1+Q → Q=0,P=1:(90,428); Q=7,P=8:(496,64) -->
+  <!-- Db（私的需要）: P=8-Q → Q=0,P=8:(90,64); Q=7,P=1:(496,428) -->
+  <!-- D₁（社会的需要）: P=6-Q → Q=0,P=6:(90,168); Q=6,P=0:(438,480) -->
+
+  <!-- 外部不経済の面積（Db と D₁ の差、競争均衡量まで）-->
+  <!-- 完全競争均衡: S∩Db → 1+Q=8-Q → 2Q=7 → Q=3.5,P=4.5 -->
+  <!-- Q=3.5: svgX=90+3.5*58=293; P=4.5: svgY=480-4.5*52=246 -->
+  <!-- 社会最適: S∩D₁ → 1+Q=6-Q → 2Q=5 → Q=2.5,P=3.5 -->
+  <!-- Q=2.5: svgX=90+2.5*58=235; P=3.5: svgY=480-3.5*52=298 -->
+
+  <!-- 外部不経済の総量（競争均衡まで: 四角形? Db-D₁ の差を積分 = 三角形か平行四辺形）-->
+  <!-- 外部不経済 = (Db - D₁) × Q_c = (8-Q-(6-Q)) = 2 for all Q → 矩形 width=293-90=203, height=2*52=104 -->
+  <!-- 四角形CAHE: CはDb上at(0,8)→(90,64); A=??? -->
+  <!-- From image: points C,A,G on price axis; S,E,F,H on graph; B=D₁切片 -->
+  <!-- Let me relabel to match image: -->
+  <!-- Image has: C(top of price axis), A(below C), G(on Db at social optimum Q), S(competitive eq on Db) -->
+  <!-- E(intersection Db and D₁?), F(on D₁ at competitive eq Q), H(on S at competitive eq Q) -->
+  <!-- B(D₁ 切片) -->
+
+  <!-- 死荷重（三角形）: competitive eq G vs social optimal S →
+       triangle formed by the welfare loss from overconsumption -->
+  <!-- DWL area: triangle with vertices at S(3.5,4.5), G(2.5,3.5), F(3.5,2.5) -->
+  <!-- Wait - let me use the exact points from image -->
+  <!-- S = competitive eq on Db: (3.5, 4.5) = G_compete point on Db -->
+  <!-- Social optimal: on S and D₁: (2.5, 3.5) -->
+
+  <!-- 社会的余剰（社会最適での消費者余剰+生産者余剰）-->
+  <!-- 死荷重（競争均衡での過剰消費による損失）: 三角形 -->
+
+  <!-- Relabeling for image match: -->
+  <!-- C = Db's Y-intercept price (=8) on Y-axis -->
+  <!-- A = Db at social optimal Q (price on D₁ at Q=2.5 = 3.5) ... hmm -->
+  <!-- G = social optimal point on D₁ (or intersection) -->
+  <!-- S = competitive equilibrium point on Db -->
+  <!-- E = social optimal point: S∩D₁ = (2.5, 3.5) -->
+  <!-- F = competitive eq on D₁: D₁ at Q=3.5 = 6-3.5=2.5 → (3.5, 2.5) -->
+  <!-- H = competitive eq on supply: S at Q=3.5 = 1+3.5=4.5 → same as competitive eq price! -->
+
+  <!-- Let me reconsider: competitive eq = S∩Db = (3.5, 4.5) = labeled as "G" in image -->
+  <!-- S = supply curve (not equilibrium point) -->
+  <!-- The points in image (from description): C, A on Y-axis; G, S(supply curve), E, F, H, B on graph -->
+  <!-- 社会最適点 E: S∩D₁ = (2.5, 3.5) → svgX=235, svgY=298 -->
+  <!-- 完全競争均衡点 G: S∩Db = (3.5, 4.5) → svgX=293, svgY=246 -->
+
+  <!-- Dead weight loss: triangle between G(competitive eq), E(social optimal), F(D₁ at competitive Q) -->
+  <!-- F = D₁ at Q=3.5: P=6-3.5=2.5 → (293, 350) -->
+  <!-- DWL = triangle G(293,246), E(235,298), F(293,350)? or different -->
+
+  <!-- Actually DWL from negative externality = triangle: -->
+  <!-- vertices: competitive eq on Db (G=293,246), competitive eq on D₁ (F=293,350), social optimal (E=235,298) -->
+  <!-- <polygon points="235,298 293,246 293,350" fill="#ffccbc" opacity="0.7"/> -->
+
+  <!-- 外部不経済の四角形（社会最適量における）: Db と D₁ の差 × 社会最適量 -->
+  <!-- = rectangle: from Q=0 to Q=2.5, height = Db(Q) - D₁(Q) = 2 for all Q -->
+  <!-- = 四角形CAFG (approximately): from A(=6,Y-intercept of D₁) to C(=8, Y-intercept of Db) × Q_social = area CAFG -->
+  <!-- C on price axis at P=8: (90,64); A on price axis at P=6: (90,168) -->
+  <!-- At Q=2.5: Db(2.5)=5.5→(235,194), D₁(2.5)=3.5→(235,298) ... that's a different rectangle -->
+
+  <!-- 外部不経済の面積（社会最適での総外部不経済）= area under (Db-D₁) from 0 to Q_social -->
+  <!-- = ∫₀^2.5 (Db-D₁)dQ = ∫₀^2.5 2 dQ = 5 = rectangle 2×2.5 -->
+  <!-- SVG rectangle: price axis from y=168 to y=64 (height=104), Q from 90 to 235 (width=145) -->
+  <!-- = 四角形 B=A,C at Q=0, Db(Q_soc), D₁(Q_soc) at Q=2.5 -->
+
+  <!-- Let me draw the filled areas -->
+  <!-- 死荷重（DWL）: between competitive eq and social optimal -->
+  <polygon points="235,194 293,246 235,298" fill="#ffccbc" opacity="0.8"/>
+
+  <!-- 外部不経済の面積（社会最適時の外部不経済）四角形 CAFG -->
+  <!-- C=(90,64), A=(90,168), at Q_soc=2.5: Db(2.5)=5.5→(235,194), D₁(2.5)=3.5→(235,298) -->
+  <!-- 四角形: (90,64)→(235,194)→(235,298)→(90,168) -->
+  <polygon points="90,64 235,194 235,298 90,168" fill="#e8f5e9" opacity="0.5"/>
+
+  <!-- 軸 -->
+  <line x1="90" y1="480" x2="90" y2="30" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="90" y1="480" x2="530" y2="480" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="72" y="25" font-size="14" fill="#333">価格</text>
+  <text x="533" y="485" font-size="14" fill="#333">数量</text>
+  <text x="72" y="486" font-size="13" fill="#333">O</text>
+
+  <!-- 供給曲線 S: from (90,428) to (496,64) -->
+  <line x1="90" y1="428" x2="496" y2="64" stroke="#f57f17" stroke-width="2.5"/>
+  <text x="498" y="62" font-size="14" fill="#f57f17" font-weight="bold">S</text>
+
+  <!-- 需要曲線 Db（私的）: from (90,64) to (496,428) -->
+  <line x1="90" y1="64" x2="496" y2="428" stroke="#1565c0" stroke-width="2.5"/>
+  <text x="498" y="428" font-size="14" fill="#1565c0" font-weight="bold">D<tspan font-size="10">b</tspan></text>
+
+  <!-- 需要曲線 D₁（社会的）: from (90,168) to (438,480) (slope=P=6-Q) -->
+  <line x1="90" y1="168" x2="438" y2="480" stroke="#c62828" stroke-width="2.5" stroke-dasharray="7,4"/>
+  <text x="440" y="480" font-size="14" fill="#c62828" font-weight="bold">D<tspan font-size="10">₁</tspan></text>
+
+  <!-- Y軸のラベル -->
+  <!-- C = Db 切片 P=8: y=64 -->
+  <line x1="86" y1="64" x2="94" y2="64" stroke="#333" stroke-width="1.5"/>
+  <text x="72" y="69" font-size="14" fill="#333" font-weight="bold">C</text>
+
+  <!-- A = D₁ 切片 P=6: y=168 -->
+  <line x1="86" y1="168" x2="94" y2="168" stroke="#333" stroke-width="1.5"/>
+  <text x="72" y="173" font-size="14" fill="#333" font-weight="bold">A</text>
+
+  <!-- B = S 切片 P=1: y=428 -->
+  <line x1="86" y1="428" x2="94" y2="428" stroke="#333" stroke-width="1.5"/>
+  <text x="72" y="433" font-size="14" fill="#333" font-weight="bold">B</text>
+
+  <!-- 社会最適均衡点 E: S∩D₁=(2.5,3.5) → (235,298) -->
+  <circle cx="235" cy="298" r="6" fill="#c62828"/>
+  <line x1="235" y1="298" x2="235" y2="480" stroke="#c62828" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="240" y="293" font-size="14" fill="#c62828" font-weight="bold">E</text>
+
+  <!-- 完全競争均衡点 G: S∩Db=(3.5,4.5) → (293,246) -->
+  <circle cx="293" cy="246" r="6" fill="#1565c0"/>
+  <line x1="293" y1="246" x2="293" y2="480" stroke="#1565c0" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="298" y="242" font-size="14" fill="#1565c0" font-weight="bold">G</text>
+
+  <!-- F = D₁ at 競争均衡量 Q=3.5: P=2.5 → (293,350) -->
+  <circle cx="293" cy="350" r="5" fill="#c62828" opacity="0.8"/>
+  <text x="298" y="355" font-size="14" fill="#c62828" font-weight="bold">F</text>
+
+  <!-- H = Db at 社会最適量 Q=2.5: P=5.5 → (235,194) -->
+  <circle cx="235" cy="194" r="5" fill="#1565c0" opacity="0.8"/>
+  <text x="240" y="192" font-size="14" fill="#1565c0" font-weight="bold">H</text>
+
+  <!-- S = S curve label point at E -->
+  <!-- Q軸ラベル -->
+  <text x="227" y="494" font-size="12" fill="#c62828">Q_社</text>
+  <text x="280" y="494" font-size="12" fill="#1565c0">Q_競</text>
+
+  <!-- 外部不経済の差（Db - D₁ = 2）を示す矢印 -->
+  <line x1="100" y1="64" x2="100" y2="168" stroke="#e65100" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="100" y1="168" x2="100" y2="64" stroke="#e65100" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="105" y="122" font-size="11" fill="#e65100">外部不</text>
+  <text x="105" y="135" font-size="11" fill="#e65100">経済分</text>
+
+  <!-- DWL ラベル -->
+  <text x="248" y="252" font-size="11" fill="#bf360c" font-weight="bold">DWL</text>
+</svg>
+
+<div>
+  <div class="legend">
+    <h3>凡例</h3>
+    <div class="legend-item" style="color:#f57f17"><strong>S</strong>: 供給曲線（限界費用）</div>
+    <div class="legend-item" style="color:#1565c0"><strong>Db</strong>: 私的需要曲線（消費者の支払意欲）</div>
+    <div class="legend-item" style="color:#c62828"><strong>D₁</strong>: 社会的需要曲線（外部不経済を考慮）</div>
+    <p style="font-size:12px;color:#666">D₁ = Db − 外部不経済分 → Db より下方</p>
+    <hr/>
+    <div class="legend-item"><span style="color:#1565c0;font-weight:bold">●G</span>: 完全競争均衡（過大消費）</div>
+    <div class="legend-item"><span style="color:#c62828;font-weight:bold">●E</span>: 社会的最適均衡</div>
+    <div class="legend-item"><span style="color:#c62828;font-weight:bold">●F</span>: 競争均衡量での D₁ の点</div>
+    <div class="legend-item"><span style="color:#1565c0;font-weight:bold">●H</span>: 社会最適量での Db の点</div>
+    <hr/>
+    <div class="legend-item" style="background:#e8f5e9;padding:3px;border-radius:3px;font-size:12px">■ 四角形CAFG: 社会最適時の外部不経済</div>
+    <div class="legend-item" style="background:#ffccbc;padding:3px;border-radius:3px;font-size:12px">■ △HGF: 過大消費による死荷重</div>
+  </div>
+
+  <div class="note">
+    <strong>核心:</strong> 負の外部性 → Db &gt; D₁ → 完全競争均衡で過大消費<br>
+    Q_競争 &gt; Q_社会最適（競争均衡 G が社会最適 E の右）<br><br>
+    <strong>政策対応（ピグー税）:</strong><br>
+    外部不経済の大きさ分の税 = Db - D₁ を課す<br>
+    → 私的費用を社会的費用に一致させる
+  </div>
+</div>
+</div>
+</body>
+</html>

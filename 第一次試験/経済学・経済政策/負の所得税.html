@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>負の所得税（第21問）</title>
+<style>
+  body { font-family: sans-serif; background: #f9f9f9; margin: 20px; }
+  h2 { color: #333; }
+  .container { display: flex; gap: 30px; align-items: flex-start; flex-wrap: wrap; }
+  .legend { background: white; border: 1px solid #ccc; padding: 16px; border-radius: 8px; min-width: 280px; }
+  .legend h3 { margin: 0 0 10px; font-size: 14px; color: #555; }
+  .legend-item { margin: 8px 0; font-size: 13px; line-height: 1.6; }
+  .note { background: #f3e5f5; border-left: 4px solid #7b1fa2; padding: 10px 14px; margin-top: 12px; font-size: 13px; line-height: 1.7; border-radius: 4px; }
+  .note strong { color: #4a148c; }
+  .formula { background: #fff; border: 1px solid #ce93d8; padding: 8px 12px; border-radius: 4px; font-family: monospace; font-size: 14px; margin: 8px 0; }
+  table { border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+  td, th { border: 1px solid #ccc; padding: 5px 8px; }
+  th { background: #f3e5f5; }
+</style>
+</head>
+<body>
+<h2>負の所得税（第21問）</h2>
+<div class="container">
+<svg width="560" height="520" style="background:white;border:1px solid #ddd;border-radius:8px;">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#333"/>
+    </marker>
+  </defs>
+
+  <!-- 座標系: svgX=90+Y_income*52, svgY=480-Yd*52 -->
+  <!-- 当初所得(横軸): 0~8.5, 可処分所得(縦軸): 0~8.5 -->
+  <!-- 45°線 OD: Yd=Y → (90,480)→(522,48) ... (0,0)→(8.5,8.5) -->
+  <!-- 直線 C: Yd=Y(1-t)+A: t=0.5, A=2 → Yd=0.5Y+2 -->
+  <!--   Y=0 → Yd=2: (90,376); Y=8 → Yd=6: (506,168) -->
+  <!-- 損益分岐点: Y₁=A/t=2/0.5=4 → (90+4*52, 480-4*52)=(298,272) -->
+  <!--   45°線: Y=4,Yd=4:(298,272); 直線C: Y=4,Yd=4 ✓ 交点! -->
+
+  <!-- 純給付ゾーン（C より上、45°線より左）の塗りつぶし -->
+  <!-- Y=0 to Y₁=4: 直線C at Y=0 is Yd=2→(90,376); 45°at Y=0 is Yd=0→(90,480) -->
+  <!-- triangle/region: (90,480),(90,376),(298,272) 塗りつぶし -->
+  <polygon points="90,480 90,376 298,272" fill="#e8f5e9" opacity="0.6"/>
+  <text x="100" y="420" font-size="12" fill="#2e7d32" font-weight="bold">純給付領域</text>
+  <text x="100" y="435" font-size="12" fill="#2e7d32">(Yd &gt; Y)</text>
+
+  <!-- 純課税ゾーン（C が 45°線より下）: Y₁ to ... -->
+  <!-- triangle: (298,272), (90,480), (480,480) ... これは違う -->
+  <!-- Y=4→8の範囲で C は 45°線より下 -->
+  <!-- Y=4:(298,272); Y=8,Yd=6:(506,168); Y=8,Y_d=8 on 45°:(506,60) -->
+  <!-- region between 45° and C for Y>Y₁: triangl ish -->
+  <polygon points="298,272 506,168 506,60" fill="#fce4ec" opacity="0.5"/>
+  <text x="360" y="190" font-size="12" fill="#c62828" font-weight="bold">純課税領域</text>
+  <text x="360" y="205" font-size="12" fill="#c62828">(Yd &lt; Y)</text>
+
+  <!-- 軸 -->
+  <line x1="90" y1="480" x2="90" y2="25" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="90" y1="480" x2="535" y2="480" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="25" y="270" font-size="12" fill="#333" transform="rotate(-90,25,270)">可処分所得（Yd）</text>
+  <text x="520" y="495" font-size="13" fill="#333">当初所得（Y）</text>
+  <text x="72" y="486" font-size="13" fill="#333">O</text>
+
+  <!-- 45°線 OD: from (90,480) to (522,48) -->
+  <line x1="90" y1="480" x2="522" y2="48" stroke="#1565c0" stroke-width="2"/>
+  <text x="524" y="46" font-size="14" fill="#1565c0" font-weight="bold">D</text>
+  <text x="430" y="125" font-size="12" fill="#1565c0">Yd = Y</text>
+  <text x="430" y="140" font-size="12" fill="#1565c0">（45°線）</text>
+
+  <!-- 直線 C: Yd=0.5Y+2 → (90,376) to (506,168) extended to (522,160) -->
+  <line x1="90" y1="376" x2="522" y2="168" stroke="#c62828" stroke-width="2.5"/>
+  <text x="524" y="170" font-size="14" fill="#c62828" font-weight="bold">C</text>
+  <text x="150" y="300" font-size="12" fill="#c62828">Yd = Y(1−t) + A</text>
+  <text x="150" y="315" font-size="12" fill="#c62828">（傾き = 1−t）</text>
+
+  <!-- Y軸ラベル: A = Yd切片 = 2 → y=376 -->
+  <line x1="86" y1="376" x2="94" y2="376" stroke="#333" stroke-width="1.5"/>
+  <text x="72" y="381" font-size="14" fill="#333" font-weight="bold">A</text>
+
+  <!-- X軸ラベル: Y₁=4 → x=298 -->
+  <line x1="298" y1="476" x2="298" y2="484" stroke="#555" stroke-width="2"/>
+  <text x="291" y="496" font-size="13" fill="#555" font-weight="bold">Y₁</text>
+
+  <!-- Y₂=6 → x=402 (例示) -->
+  <line x1="402" y1="476" x2="402" y2="484" stroke="#555" stroke-width="1.5"/>
+  <text x="396" y="496" font-size="13" fill="#555">Y₂</text>
+
+  <!-- Y₃=7.5 → x=480 (例示) -->
+  <line x1="480" y1="476" x2="480" y2="484" stroke="#555" stroke-width="1.5"/>
+  <text x="474" y="496" font-size="13" fill="#555">Y₃</text>
+
+  <!-- 損益分岐点 (Y₁=4, Yd=4) → (298, 272) -->
+  <circle cx="298" cy="272" r="6" fill="#d32f2f"/>
+  <line x1="298" y1="272" x2="298" y2="480" stroke="#555" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="90" y1="272" x2="298" y2="272" stroke="#555" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="305" y="268" font-size="12" fill="#d32f2f">損益分岐点</text>
+
+  <!-- A の縦線 -->
+  <line x1="90" y1="376" x2="90" y2="480" stroke="#e65100" stroke-width="2" stroke-dasharray="4,3"/>
+
+  <!-- A 点: (0,A)=(90,376) →定額給付 -->
+  <circle cx="90" cy="376" r="5" fill="#e65100"/>
+  <text x="96" y="372" font-size="11" fill="#e65100">定額給付A</text>
+
+  <!-- Y₁での Yd ラベル -->
+  <line x1="86" y1="272" x2="94" y2="272" stroke="#333" stroke-width="1.5"/>
+  <text x="58" y="277" font-size="12" fill="#555">Y₁(=A/t)</text>
+
+  <!-- 角度ラベル（傾き説明）-->
+  <text x="170" y="430" font-size="11" fill="#1565c0">傾き=1（45°）</text>
+  <text x="240" y="370" font-size="11" fill="#c62828">傾き=1−t</text>
+</svg>
+
+<div>
+  <div class="legend">
+    <h3>凡例と公式</h3>
+    <div class="formula">Yd = Y(1−t) + A</div>
+    <div class="legend-item">Y: 当初所得, t: 比例税率（0&lt;t&lt;1）</div>
+    <div class="legend-item">A: 定額給付（Y=0のときの可処分所得）</div>
+    <div class="legend-item"><strong>損益分岐点 Y₁ = A ÷ t</strong>（C と 45°線の交点）</div>
+    <hr/>
+    <div class="legend-item" style="background:#e8f5e9;padding:3px;border-radius:3px">■ 純給付領域: Y &lt; Y₁ → Yd &gt; Y</div>
+    <div class="legend-item" style="background:#fce4ec;padding:3px;border-radius:3px">■ 純課税領域: Y &gt; Y₁ → Yd &lt; Y</div>
+    <hr/>
+    <div class="legend-item" style="color:#1565c0"><strong>D: 45°線</strong>（Yd = Y）</div>
+    <div class="legend-item" style="color:#c62828"><strong>C: 直線</strong>（Yd = Y(1-t) + A、傾き 1-t &lt; 1）</div>
+  </div>
+
+  <table>
+    <tr><th>選択肢</th><th>正誤</th><th>理由</th></tr>
+    <tr><td>a: 0→Y₂で純給付増加</td><td>誤</td><td>Y₂&gt;Y₁ → 課税領域、純給付はY₁で0→負</td></tr>
+    <tr><td>b: 0→Y₁でYd増加</td><td>正</td><td>C の傾き 1-t &gt; 0 → Y↑→Yd↑</td></tr>
+    <tr><td>c: Y=Y₁でYd=Y</td><td>正</td><td>Y₁は損益分岐点 → C と 45°線の交点</td></tr>
+    <tr><td>d: Y=Y₃で追加所得に課税</td><td>正</td><td>Y₃&gt;Y₁ → 純課税 → 追加所得に税率t適用</td></tr>
+  </table>
+
+  <div class="note">
+    <strong>正答: オ（b と d）</strong><br><br>
+    a が誤りの理由: Y₂ は Y₁ の右（課税領域）→ Y₂ 時点では<strong>純給付は負</strong>（課税）<br>
+    Y₁ = A/t = 損益分岐点 で純給付 = 0 → それ以上は課税
+  </div>
+</div>
+</div>
+</body>
+</html>

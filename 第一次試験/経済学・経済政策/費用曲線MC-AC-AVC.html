@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>費用曲線 MC・AC・AVC（第16問）</title>
+<style>
+  body { font-family: sans-serif; background: #f9f9f9; margin: 20px; }
+  h2 { color: #333; }
+  .container { display: flex; gap: 30px; align-items: flex-start; flex-wrap: wrap; }
+  .legend { background: white; border: 1px solid #ccc; padding: 16px; border-radius: 8px; min-width: 260px; }
+  .legend h3 { margin: 0 0 10px; font-size: 14px; color: #555; }
+  .legend-item { display: flex; align-items: center; gap: 8px; margin: 6px 0; font-size: 13px; }
+  .line { width: 32px; height: 3px; }
+  .note { background: #fff8e1; border-left: 4px solid #f9a825; padding: 10px 14px; margin-top: 12px; font-size: 13px; line-height: 1.7; border-radius: 4px; }
+  .note strong { color: #e65100; }
+  table { border-collapse: collapse; font-size: 12px; margin-top: 12px; }
+  td, th { border: 1px solid #ccc; padding: 5px 8px; }
+  th { background: #e8f5e9; }
+</style>
+</head>
+<body>
+<h2>費用曲線 MC・AC・AVC（第16問）</h2>
+<div class="container">
+<svg width="580" height="510" style="background:white;border:1px solid #ddd;border-radius:8px;">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#333"/>
+    </marker>
+  </defs>
+
+  <!-- 生産者余剰の塗りつぶし領域 P₀→B の矩形 (四角形 P₀BEC) -->
+  <!-- Q₀のx=420, P₀のy=70, Bのy=310, P₀水平線からAVC(Q₀)のBまで -->
+  <polygon points="90,70 420,70 420,310 90,310" fill="#fff9c4" opacity="0.7"/>
+  <text x="200" y="200" font-size="12" fill="#f57f17" font-weight="bold">生産者余剰</text>
+  <text x="185" y="215" font-size="12" fill="#f57f17">四角形 P₀BEC</text>
+
+  <!-- 軸 -->
+  <line x1="90" y1="470" x2="90" y2="20" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="90" y1="470" x2="555" y2="470" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="72" y="15" font-size="14" fill="#333">価格</text>
+  <text x="558" y="475" font-size="14" fill="#333">生産量</text>
+  <text x="72" y="476" font-size="13" fill="#333">O</text>
+
+  <!-- 座標系: svgX=90+Q*48, svgY=470-P*45 -->
+  <!-- Q範囲: 0~9, P範囲: 0~9 -->
+  <!-- Q₀=7: svgX=90+7*48=426; P₀=8.8: svgY=470-8.8*45=74(約70) -->
+
+  <!-- 価格水準の水平線と Y 軸ラベル -->
+  <!-- P₀=8.8 → y=470-8.8*45=74(約70) -->
+  <line x1="86" y1="70" x2="94" y2="70" stroke="#333" stroke-width="1.5"/>
+  <text x="60" y="75" font-size="13" fill="#333" font-weight="bold">P₀</text>
+  <line x1="90" y1="70" x2="420" y2="70" stroke="#333" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <!-- P₁=A → y=470-4.9*45=250 -->
+  <line x1="86" y1="250" x2="94" y2="250" stroke="#333" stroke-width="1.5"/>
+  <text x="57" y="255" font-size="13" fill="#333" font-weight="bold">A=P₁</text>
+  <line x1="90" y1="250" x2="420" y2="250" stroke="#888" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <!-- B=3.6 → y=470-3.6*45=308(約310) -->
+  <line x1="86" y1="310" x2="94" y2="310" stroke="#333" stroke-width="1.5"/>
+  <text x="75" y="315" font-size="13" fill="#333" font-weight="bold">B</text>
+  <line x1="90" y1="310" x2="420" y2="310" stroke="#aaa" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <!-- P₂=3.0 → y=470-3.0*45=335 -->
+  <line x1="86" y1="335" x2="94" y2="335" stroke="#333" stroke-width="1.5"/>
+  <text x="71" y="340" font-size="13" fill="#333">P₂</text>
+
+  <!-- P₃=2.0 → y=470-2.0*45=380 -->
+  <line x1="86" y1="380" x2="94" y2="380" stroke="#333" stroke-width="1.5"/>
+  <text x="71" y="385" font-size="13" fill="#333">P₃</text>
+
+  <!-- Q₀ の垂直破線 -->
+  <line x1="420" y1="90" x2="420" y2="470" stroke="#555" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <line x1="416" y1="466" x2="424" y2="466" stroke="#555" stroke-width="2"/>
+  <text x="413" y="485" font-size="13" fill="#333" font-weight="bold">Q₀</text>
+
+  <!-- AVC 曲線 (広いU字): min at Q=5(x=330, P=2.0, y=380) -->
+  <!-- Points: (1,7)(2,5)(3,3.5)(4,2.5)(5,2.0)(6,2.3)(7,3.6)(8,5.5)(9,8) -->
+  <!-- svgX=90+Q*48, svgY=470-P*45 -->
+  <!-- Q=1: (138,155); Q=2: (186,245); Q=3: (234,312); Q=4: (282,357); Q=5: (330,380) -->
+  <!-- Q=6: (378,367); Q=7: (426,308); Q=8: (474,223); Q=9: (522,110) -->
+  <path d="M138,155 C165,225 210,310 234,312 S282,357 330,380 S390,355 426,308 S474,195 522,110"
+        stroke="#2e7d32" stroke-width="3" fill="none"/>
+  <text x="524" y="108" font-size="14" fill="#2e7d32" font-weight="bold">AVC</text>
+
+  <!-- AC 曲線 (最も広いU字): min at Q=6(x=378, P=4.9, y=250) -->
+  <!-- Q=2:(186,80); Q=3:(234,160); Q=4:(282,205); Q=5:(330,235); Q=6:(378,250); Q=7:(426,248); -->
+  <!-- wait: AC(6)=4.9, AC(7)=? need AC(Q0=7)=P1=A=4.9? let me adjust -->
+  <!-- AC min at Q₀=7, P₁=4.9: (426,250) -->
+  <!-- AC path: Q=2:(186,65); Q=3:(234,150); Q=4:(282,200); Q=5:(330,232); Q=6:(378,248); Q=7:(426,250); Q=8:(474,260); Q=9:(522,285) -->
+  <path d="M186,65 C210,130 258,185 282,200 S330,232 378,248 S426,250 474,258 S522,285 550,320"
+        stroke="#1565c0" stroke-width="3" fill="none"/>
+  <text x="552" y="320" font-size="14" fill="#1565c0" font-weight="bold">AC</text>
+
+  <!-- MC 曲線 (最も急なU字): min at Q=5(y=380)と同じ; Q=7でMC=AC=P₁=4.9 -->
+  <!-- MC: Q=1:(138,65); Q=2:(186,165); Q=3:(234,290); Q=4:(282,360); Q=5:(330,380) -->
+  <!-- Q=6:(378,330); Q=7:(426,248); Q=8:(474,120); Q=9:(522,40) -->
+  <!-- 但しMC(5)=AVC(5)=P₃=2.0→y=380 ✓; MC(7)=AC(7)=P₁=4.9→y=250 ✓ -->
+  <path d="M186,165 C210,240 258,335 282,360 S330,380 375,335 S420,252 474,125"
+        stroke="#c62828" stroke-width="3" fill="none"/>
+  <text x="478" y="123" font-size="14" fill="#c62828" font-weight="bold">MC</text>
+
+  <!-- 点 C: (Q₀=7, P₀=8.8) → (426, 70) = MC=P₀ の交点 -->
+  <circle cx="420" cy="70" r="6" fill="#c62828"/>
+  <text x="428" y="66" font-size="14" fill="#c62828" font-weight="bold">C</text>
+
+  <!-- 点 D: (Q₀=7, P₁=A=4.9) → (426, 250) = AC minimum -->
+  <circle cx="420" cy="250" r="6" fill="#1565c0"/>
+  <text x="428" y="248" font-size="14" fill="#1565c0" font-weight="bold">D</text>
+
+  <!-- 点 E: (Q₀=7, B=3.6) → (426, 308) = AVC at Q₀ -->
+  <circle cx="420" cy="308" r="6" fill="#2e7d32"/>
+  <text x="428" y="308" font-size="14" fill="#2e7d32" font-weight="bold">E</text>
+
+  <!-- AVC minimum at Q=5 (P₃=2.0): circle -->
+  <circle cx="330" cy="380" r="5" fill="#2e7d32" opacity="0.7"/>
+  <text x="334" y="376" font-size="11" fill="#2e7d32">AVC最小=P₃</text>
+
+  <!-- AC minimum marker at Q=7 (same as Q₀ in this simplified graph) -->
+  <text x="338" y="246" font-size="11" fill="#1565c0">AC最小=P₁</text>
+</svg>
+
+<div>
+  <div class="legend">
+    <h3>凡例</h3>
+    <div class="legend-item">
+      <div class="line" style="background:#c62828;"></div>
+      <span>MC（限界費用）</span>
+    </div>
+    <div class="legend-item">
+      <div class="line" style="background:#1565c0;"></div>
+      <span>AC（平均費用）</span>
+    </div>
+    <div class="legend-item">
+      <div class="line" style="background:#2e7d32;"></div>
+      <span>AVC（平均可変費用）</span>
+    </div>
+    <hr/>
+    <div class="legend-item"><span style="color:#c62828;font-weight:bold">●C</span><span>MC = P₀（最適生産点）</span></div>
+    <div class="legend-item"><span style="color:#1565c0;font-weight:bold">●D</span><span>AC 最小値 = P₁（損益分岐点）</span></div>
+    <div class="legend-item"><span style="color:#2e7d32;font-weight:bold">●E</span><span>AVC = B（at Q₀）</span></div>
+  </div>
+
+  <table>
+    <tr><th>価格</th><th>状態</th><th>損益</th></tr>
+    <tr><td>P &gt; P₁</td><td>超過利潤</td><td>利潤 &gt; 0</td></tr>
+    <tr><td><strong>P = P₁</strong></td><td><strong>損益分岐点</strong></td><td>利潤 = 0</td></tr>
+    <tr><td>P₃ &lt; P &lt; P₁</td><td>損失だが生産継続</td><td>損失 &lt; FC</td></tr>
+    <tr><td><strong>P = P₃</strong></td><td><strong>操業停止点</strong></td><td>損失 = FC</td></tr>
+    <tr><td>P &lt; P₃</td><td>操業停止</td><td>損失 &gt; FC</td></tr>
+  </table>
+
+  <div class="note">
+    <strong>生産者余剰（設問1）:</strong><br>
+    P₀ で生産するとき = TR − VC = (P₀ − AVC) × Q₀<br>
+    = <strong>四角形 P₀BEC</strong>（答: オ）<br><br>
+    <strong>設問2 キーポイント:</strong><br>
+    P=P₁ → TR = TC（損失ゼロ、a=正）<br>
+    P₃&lt;P₂&lt;P₁ → 損失 &lt; FC（b=正）<br>
+    P=P₃ → TR = VC → 損失 = FC（"可変費用のみ" は誤、c=誤）
+  </div>
+</div>
+</div>
+</body>
+</html>
