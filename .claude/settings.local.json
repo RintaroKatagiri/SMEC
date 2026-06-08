@@ -16,7 +16,17 @@
       "Bash(powershell *)",
       "Bash(git stash *)",
       "Bash(git pull *)",
-      "Bash(git rebase *)"
+      "Bash(git rebase *)",
+      "mcp__playwright__browser_navigate",
+      "Bash(sort -k5 -n)",
+      "Bash(python3 -c ' *)",
+      "WebSearch",
+      "Bash(dir \"C:\\\\Users\\\\r00000789\\\\SMEC\\\\第一次試験\")",
+      "Bash(dir C:\\\\Users\\\\r00000789\\\\SMEC\\\\第一次試験\\\\中小企業経営・中小企業政策 *)",
+      "WebFetch(domain:www.smrj.go.jp)",
+      "WebFetch(domain:kodoka.smrj.go.jp)",
+      "Bash(conda --version)",
+      "Bash(conda env *)"
     ]
   }
 }
