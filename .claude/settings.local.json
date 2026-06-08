@@ -24,7 +24,9 @@
       "Bash(dir \"C:\\\\Users\\\\r00000789\\\\SMEC\\\\第一次試験\")",
       "Bash(dir C:\\\\Users\\\\r00000789\\\\SMEC\\\\第一次試験\\\\中小企業経営・中小企業政策 *)",
       "WebFetch(domain:www.smrj.go.jp)",
-      "WebFetch(domain:kodoka.smrj.go.jp)"
+      "WebFetch(domain:kodoka.smrj.go.jp)",
+      "Bash(conda --version)",
+      "Bash(conda env *)"
     ]
   }
 }
