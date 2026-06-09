@@ -26,6 +26,9 @@
   table { border-collapse: collapse; font-size: 12px; margin-top: 12px; width: 100%; background: #fff; }
   td, th { border: 1px solid #cfd4cf; padding: 6px 8px; }
   th { background: #e8f5e9; }
+  .caption { margin: 14px 0 0; font-size: 13px; font-weight: 700; color: #3b3f42; }
+  .small { font-size: 12px; color: #555; margin: 6px 0 0; line-height: 1.55; }
+  .case-chart { display: block; margin-top: 10px; max-width: 100%; background: #fff; border: 1px solid #d7d7d2; border-radius: 8px; }
   .note { margin-top: 12px; font-size: 13px; line-height: 1.65; }
   .note strong { color: #b45309; }
 </style>
@@ -131,6 +134,143 @@
     <tr><td>P &lt; P₃</td><td>操業停止</td><td>損失 &gt; FC</td></tr>
   </table>
 
+  <div class="caption">損失判定の数字例</div>
+  <p class="small">Q=10個、AC=100円、AVC=70円とする。このとき FC=(AC−AVC)×Q=300円。</p>
+  <svg class="case-chart" width="340" height="292" viewBox="0 0 340 292" role="img" aria-label="価格別の黒字、損失、生産停止の判定グラフ">
+    <text x="16" y="22" font-size="13" fill="#333" font-weight="700">価格別の損益グラフ</text>
+    <text x="16" y="40" font-size="11" fill="#555">各棒の高さは1個あたり金額。横幅は Q=10 個。</text>
+
+    <line x1="18" y1="75" x2="325" y2="75" stroke="#1565c0" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="19" y="71" font-size="10" fill="#1565c0">AC=100</text>
+    <line x1="18" y1="105" x2="325" y2="105" stroke="#2e7d32" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="19" y="121" font-size="10" fill="#2e7d32">AVC=70</text>
+
+    <!-- P=120: 黒字 -->
+    <g transform="translate(26,0)">
+      <rect x="0" y="105" width="40" height="70" fill="#e8f5e9"/>
+      <rect x="0" y="75" width="40" height="30" fill="#dbeafe"/>
+      <rect x="0" y="55" width="40" height="20" fill="#bbf7d0"/>
+      <rect x="0" y="45" width="40" height="130" fill="none" stroke="#aaa"/>
+      <line x1="-3" y1="55" x2="43" y2="55" stroke="#111" stroke-width="2"/>
+      <text x="20" y="190" font-size="10" fill="#333" text-anchor="middle">P=120</text>
+      <text x="20" y="205" font-size="10" fill="#166534" text-anchor="middle">黒字</text>
+    </g>
+
+    <!-- P=100: 損益分岐 -->
+    <g transform="translate(88,0)">
+      <rect x="0" y="105" width="40" height="70" fill="#e8f5e9"/>
+      <rect x="0" y="75" width="40" height="30" fill="#dbeafe"/>
+      <rect x="0" y="45" width="40" height="130" fill="none" stroke="#aaa"/>
+      <line x1="-3" y1="75" x2="43" y2="75" stroke="#111" stroke-width="2"/>
+      <text x="20" y="190" font-size="10" fill="#333" text-anchor="middle">P=100</text>
+      <text x="20" y="205" font-size="10" fill="#334155" text-anchor="middle">損益0</text>
+    </g>
+
+    <!-- P=80: 損失だが生産継続 -->
+    <g transform="translate(150,0)">
+      <rect x="0" y="105" width="40" height="70" fill="#e8f5e9"/>
+      <rect x="0" y="75" width="40" height="30" fill="#dbeafe"/>
+      <rect x="0" y="75" width="40" height="20" fill="#fed7aa"/>
+      <rect x="0" y="45" width="40" height="130" fill="none" stroke="#aaa"/>
+      <line x1="-3" y1="95" x2="43" y2="95" stroke="#111" stroke-width="2"/>
+      <text x="20" y="190" font-size="10" fill="#333" text-anchor="middle">P=80</text>
+      <text x="20" y="205" font-size="10" fill="#9a3412" text-anchor="middle">損失&lt;FC</text>
+    </g>
+
+    <!-- P=70: 操業停止点 -->
+    <g transform="translate(212,0)">
+      <rect x="0" y="105" width="40" height="70" fill="#e8f5e9"/>
+      <rect x="0" y="75" width="40" height="30" fill="#dbeafe"/>
+      <rect x="0" y="75" width="40" height="30" fill="#fecaca"/>
+      <rect x="0" y="45" width="40" height="130" fill="none" stroke="#aaa"/>
+      <line x1="-3" y1="105" x2="43" y2="105" stroke="#111" stroke-width="2"/>
+      <text x="20" y="190" font-size="10" fill="#333" text-anchor="middle">P=70</text>
+      <text x="20" y="205" font-size="10" fill="#991b1b" text-anchor="middle">損失=FC</text>
+    </g>
+
+    <!-- P=60: 操業停止 -->
+    <g transform="translate(274,0)">
+      <rect x="0" y="105" width="40" height="70" fill="#e8f5e9"/>
+      <rect x="0" y="75" width="40" height="30" fill="#dbeafe"/>
+      <rect x="0" y="75" width="40" height="40" fill="#fecaca"/>
+      <rect x="0" y="105" width="40" height="10" fill="#fca5a5"/>
+      <rect x="0" y="45" width="40" height="130" fill="none" stroke="#aaa"/>
+      <line x1="-3" y1="115" x2="43" y2="115" stroke="#111" stroke-width="2"/>
+      <text x="20" y="190" font-size="10" fill="#333" text-anchor="middle">P=60</text>
+      <text x="20" y="205" font-size="10" fill="#991b1b" text-anchor="middle">停止</text>
+    </g>
+
+    <rect x="18" y="225" width="10" height="10" fill="#bbf7d0"/>
+    <text x="33" y="234" font-size="10" fill="#333">利益</text>
+    <rect x="82" y="225" width="10" height="10" fill="#fed7aa"/>
+    <text x="97" y="234" font-size="10" fill="#333">固定費の一部未回収</text>
+    <rect x="198" y="225" width="10" height="10" fill="#fecaca"/>
+    <text x="213" y="234" font-size="10" fill="#333">損失</text>
+    <rect x="18" y="245" width="10" height="10" fill="#e8f5e9"/>
+    <text x="33" y="254" font-size="10" fill="#333">可変費用VC</text>
+    <rect x="118" y="245" width="10" height="10" fill="#dbeafe"/>
+    <text x="133" y="254" font-size="10" fill="#333">固定費FC</text>
+    <line x1="210" y1="250" x2="246" y2="250" stroke="#111" stroke-width="2"/>
+    <text x="252" y="254" font-size="10" fill="#333">売値P</text>
+  </svg>
+  <table>
+    <tr><th>売値P</th><th>判定</th><th>計算</th></tr>
+    <tr>
+      <td>120円</td>
+      <td>黒字</td>
+      <td>P&gt;AC。利潤=(120−100)×10=200円</td>
+    </tr>
+    <tr>
+      <td>100円</td>
+      <td>損益分岐</td>
+      <td>P=AC。利潤=(100−100)×10=0円</td>
+    </tr>
+    <tr>
+      <td>80円</td>
+      <td>損失だが生産継続</td>
+      <td>AVC&lt;P&lt;AC。損失=(100−80)×10=200円 &lt; FC</td>
+    </tr>
+    <tr>
+      <td>70円</td>
+      <td>操業停止点</td>
+      <td>P=AVC。損失=(100−70)×10=300円 = FC</td>
+    </tr>
+    <tr>
+      <td>60円</td>
+      <td>操業停止</td>
+      <td>P&lt;AVC。生産すると損失=(100−60)×10=400円 &gt; FC</td>
+    </tr>
+  </table>
+
+  <div class="caption">消費者余剰（市場全体の図）</div>
+  <p class="small">この費用曲線の大きな図は企業1社の図なので、消費者余剰は直接読まない。消費者余剰は市場全体の需要曲線Dと価格線Pの間で見る。</p>
+  <svg class="case-chart" width="340" height="238" viewBox="0 0 340 238" role="img" aria-label="完全競争市場における消費者余剰の図">
+    <text x="16" y="22" font-size="13" fill="#333" font-weight="700">完全競争市場の消費者余剰</text>
+
+    <line x1="54" y1="196" x2="54" y2="42" stroke="#333" stroke-width="1.8"/>
+    <line x1="54" y1="196" x2="306" y2="196" stroke="#333" stroke-width="1.8"/>
+    <text x="35" y="40" font-size="11" fill="#333">価格</text>
+    <text x="304" y="211" font-size="11" fill="#333">数量</text>
+
+    <!-- Consumer surplus area: under demand, above price, left of equilibrium quantity -->
+    <polygon points="54,54 178,126 54,126" fill="#dbeafe" opacity="0.9"/>
+    <text x="80" y="105" font-size="11" fill="#1d4ed8" font-weight="700">消費者余剰</text>
+
+    <line x1="54" y1="54" x2="278" y2="184" stroke="#2563eb" stroke-width="3"/>
+    <text x="282" y="185" font-size="12" fill="#2563eb" font-weight="700">D</text>
+
+    <line x1="74" y1="184" x2="274" y2="66" stroke="#16a34a" stroke-width="3"/>
+    <text x="278" y="66" font-size="12" fill="#16a34a" font-weight="700">S</text>
+
+    <line x1="54" y1="126" x2="178" y2="126" stroke="#111" stroke-width="1.8" stroke-dasharray="5,4"/>
+    <text x="33" y="130" font-size="11" fill="#111" font-weight="700">P</text>
+    <line x1="178" y1="126" x2="178" y2="196" stroke="#111" stroke-width="1.3" stroke-dasharray="5,4"/>
+    <text x="172" y="211" font-size="11" fill="#111" font-weight="700">Q</text>
+    <circle cx="178" cy="126" r="4.5" fill="#111"/>
+
+    <text x="16" y="224" font-size="11" fill="#555">消費者余剰 = 需要曲線Dの下、価格線Pの上</text>
+  </svg>
+
   <div class="note">
     <h3>図の読み方</h3>
     <strong>位置関係:</strong><br>
@@ -138,6 +278,7 @@
     <strong>注意:</strong><br>
     C は P₀ と MC の交点なので Q₀ 上にある。D は AC 最小点であり、通常は Q₀ とは別の生産量にある。<br><br>
     <strong>生産者余剰（設問1）:</strong><br>
+    C は「P₀なら何個作るか」を決めるための点。長方形の下辺は MC ではなく、Q₀で読んだ AVC(Q₀)=B。<br>
     P₀ で生産するとき = TR − VC = (P₀ − AVC(Q₀)) × Q₀<br>
     = <strong>四角形 P₀BEC</strong>（答: オ）
   </div>
