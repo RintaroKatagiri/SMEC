@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>消費者余剰と生産者余剰</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --border: #d9e0e8;
+      --grid: #e7ebf0;
+      --axis: #344054;
+      --blue: #2563eb;
+      --green: #16803c;
+      --red: #c2410c;
+      --amber: #b7791f;
+      --violet: #7c3aed;
+      --cyan: #0284c7;
+      --shadow: 0 8px 24px rgba(23, 32, 51, 0.08);
+      --cs-fill: rgba(37, 99, 235, 0.18);
+      --ps-fill: rgba(22, 128, 60, 0.18);
+      --dw-fill: rgba(194, 65, 12, 0.25);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.65;
+    }
+
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 28px auto 44px;
+    }
+
+    h1 { margin: 0 0 8px; font-size: clamp(24px, 4vw, 36px); line-height: 1.2; }
+    h2 { margin: 0 0 14px; font-size: 20px; }
+    h3 { margin: 0 0 8px; font-size: 16px; }
+    p  { margin: 8px 0; }
+
+    .lead { color: var(--muted); max-width: 860px; margin-bottom: 18px; }
+    .source { color: var(--muted); font-size: 13px; margin-top: 20px; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+      gap: 18px;
+      align-items: start;
+      margin-top: 18px;
+    }
+
+    section, .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    section { padding: 18px; }
+    .panel  { padding: 16px; }
+
+    .chart {
+      width: 100%;
+      aspect-ratio: 1.2 / 1;
+      min-height: 320px;
+      display: block;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    label { display: block; color: var(--muted); font-size: 14px; }
+    input[type="range"] { width: 100%; accent-color: var(--blue); }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: #eef4ff;
+      color: #1d4ed8;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .metric {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fafbfc;
+    }
+
+    .metric span { display: block; color: var(--muted); font-size: 13px; }
+    .metric strong { display: block; margin-top: 4px; font-size: 22px; line-height: 1.25; }
+
+    .formula {
+      padding: 12px;
+      border-left: 4px solid var(--blue);
+      background: #f8fbff;
+      border-radius: 6px;
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 14px;
+      overflow-wrap: anywhere;
+      margin: 10px 0;
+    }
+
+    .rule-list { margin: 8px 0 0; padding: 0; list-style: none; }
+    .rule-list li { padding: 10px 0; border-top: 1px solid var(--border); }
+    .rule-list li:first-child { border-top: 0; padding-top: 0; }
+
+    .exam-box {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 8px;
+      background: #fff8ed;
+      border: 1px solid #f3d2a2;
+    }
+    .exam-box strong { color: #8a4b0f; }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; }
+    .swatch { width: 14px; height: 14px; border-radius: 3px; display: inline-block; }
+
+    .axis-label { fill: var(--axis); font-size: 13px; font-weight: 650; }
+    .small-label { fill: var(--muted); font-size: 12px; }
+    .chart-label { fill: var(--axis); font-size: 13px; font-weight: 650; }
+    .grid-line { stroke: var(--grid); stroke-width: 1; }
+    .axis { stroke: var(--axis); stroke-width: 2; }
+    .dash { stroke: #98a2b3; stroke-width: 2; stroke-dasharray: 5 5; }
+
+    @media (max-width: 900px) {
+      .layout, .two-col { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      main { width: min(100% - 20px, 1180px); margin-top: 20px; }
+      section, .panel { padding: 14px; }
+      .controls, .metrics { grid-template-columns: 1fr; }
+      .chart { min-height: 260px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>消費者余剰と生産者余剰</h1>
+    <p class="lead">需要曲線・供給曲線と価格の間の面積が余剰を表す。市場均衡で社会的余剰は最大になり、価格規制・課税・独占は死荷重（厚生損失）を生む。</p>
+
+    <!-- ============================  メインチャート  ============================ -->
+    <div class="layout">
+      <section>
+        <h2>消費者余剰・生産者余剰・死荷重</h2>
+        <svg id="mainChart" class="chart" viewBox="0 0 680 500" role="img" aria-label="消費者余剰・生産者余剰グラフ">
+          <defs>
+            <marker id="arr" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#344054"></path>
+            </marker>
+          </defs>
+          <!-- grid -->
+          <g id="gridLayer"></g>
+          <!-- areas -->
+          <polygon id="csArea" points="" style="fill:var(--cs-fill); stroke:none;"></polygon>
+          <polygon id="psArea" points="" style="fill:var(--ps-fill); stroke:none;"></polygon>
+          <polygon id="dwArea" points="" style="fill:var(--dw-fill); stroke:none;"></polygon>
+          <!-- curves -->
+          <line id="demandLine" x1="0" y1="0" x2="0" y2="0" stroke="var(--blue)" stroke-width="4" stroke-linecap="round"></line>
+          <line id="supplyLine" x1="0" y1="0" x2="0" y2="0" stroke="var(--green)" stroke-width="4" stroke-linecap="round"></line>
+          <!-- price line -->
+          <line id="priceLine" x1="0" y1="0" x2="0" y2="0" stroke="var(--red)" stroke-width="2.5" stroke-dasharray="8 4"></line>
+          <!-- equilibrium point -->
+          <circle id="eqPoint" cx="0" cy="0" r="8" fill="var(--red)" stroke="#fff" stroke-width="3"></circle>
+          <circle id="qpPoint" cx="0" cy="0" r="7" fill="var(--amber)" stroke="#fff" stroke-width="3"></circle>
+          <!-- axes -->
+          <line class="axis" x1="70" y1="430" x2="620" y2="430" marker-end="url(#arr)"></line>
+          <line class="axis" x1="70" y1="430" x2="70" y2="40" marker-end="url(#arr)"></line>
+          <text class="axis-label" x="625" y="435">数量 Q</text>
+          <text class="axis-label" x="46" y="34">価格 P</text>
+          <!-- labels -->
+          <text id="csLabel" x="0" y="0" class="chart-label" fill="var(--blue)" text-anchor="middle"></text>
+          <text id="psLabel" x="0" y="0" class="chart-label" fill="var(--green)" text-anchor="middle"></text>
+          <text id="dwLabel" x="0" y="0" class="chart-label" fill="var(--red)" text-anchor="middle" font-size="12"></text>
+          <text id="demandTag" x="0" y="0" class="chart-label" fill="var(--blue)">D</text>
+          <text id="supplyTag" x="0" y="0" class="chart-label" fill="var(--green)">S</text>
+        </svg>
+
+        <div class="controls">
+          <label>
+            設定価格（均衡価格に対して）
+            <input id="priceSlider" type="range" min="20" max="80" value="50" step="1">
+          </label>
+          <span class="pill" id="priceLabel">均衡価格</span>
+        </div>
+
+        <div class="legend" style="margin-top:12px;">
+          <span class="legend-item"><span class="swatch" style="background:rgba(37,99,235,0.35);"></span>消費者余剰 CS</span>
+          <span class="legend-item"><span class="swatch" style="background:rgba(22,128,60,0.35);"></span>生産者余剰 PS</span>
+          <span class="legend-item"><span class="swatch" style="background:rgba(194,65,12,0.4);"></span>死荷重 DW</span>
+          <span class="legend-item"><span class="swatch" style="background:var(--red); border-radius:50%;"></span>設定価格での均衡</span>
+        </div>
+      </section>
+
+      <aside class="panel">
+        <h2>余剰の読み取り</h2>
+        <div class="metrics">
+          <div class="metric">
+            <span>消費者余剰 CS</span>
+            <strong id="csValue" style="color:var(--blue);">—</strong>
+          </div>
+          <div class="metric">
+            <span>生産者余剰 PS</span>
+            <strong id="psValue" style="color:var(--green);">—</strong>
+          </div>
+          <div class="metric">
+            <span>社会的余剰 W</span>
+            <strong id="totalValue">—</strong>
+          </div>
+          <div class="metric">
+            <span>死荷重 DW</span>
+            <strong id="dwValue" style="color:var(--red);">—</strong>
+          </div>
+        </div>
+
+        <div class="formula">CS = 需要曲線下 − 価格×数量<br>PS = 価格×数量 − 供給曲線下</div>
+
+        <ul class="rule-list">
+          <li><strong>価格↓（上限規制）</strong>：CS が増え PS が減る。数量も減り死荷重発生。</li>
+          <li><strong>価格↑（下限規制）</strong>：PS が増え CS が減る。数量が減り死荷重発生。</li>
+          <li><strong>均衡価格</strong>：死荷重ゼロ・社会的余剰最大。</li>
+        </ul>
+
+        <div class="exam-box">
+          <strong>試験のポイント</strong>
+          <p>「死荷重＝失われた三角形」は完全競争 vs 規制・独占の比較で必ず登場。面積の計算式（底辺×高さ÷2）を使えるようにしておく。</p>
+        </div>
+      </aside>
+    </div>
+
+    <!-- ============================  課税の効果  ============================ -->
+    <section style="margin-top:18px;">
+      <h2>課税の効果と税の帰着</h2>
+      <p class="lead" style="margin-bottom:14px;">従量税（単位あたりt円）を生産者に課すと、供給曲線がt分だけ上にシフトし、均衡価格・数量・余剰が変化する。</p>
+
+      <div class="two-col">
+        <div>
+          <h3>課税前後の比較</h3>
+          <svg id="taxChart" class="chart" viewBox="0 0 440 360" role="img" aria-label="課税の効果グラフ">
+            <defs>
+              <marker id="arr2" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#344054"></path>
+              </marker>
+            </defs>
+            <!-- areas pre-tax CS -->
+            <polygon id="taxCS" points="" style="fill:rgba(37,99,235,0.15); stroke:none;"></polygon>
+            <polygon id="taxPS" points="" style="fill:rgba(22,128,60,0.15); stroke:none;"></polygon>
+            <polygon id="taxRev" points="" style="fill:rgba(183,121,31,0.25); stroke:none;"></polygon>
+            <polygon id="taxDW"  points="" style="fill:rgba(194,65,12,0.35); stroke:none;"></polygon>
+            <!-- curves -->
+            <line id="taxDemand" x1="0" y1="0" x2="0" y2="0" stroke="var(--blue)"   stroke-width="3.5" stroke-linecap="round"></line>
+            <line id="taxSupply" x1="0" y1="0" x2="0" y2="0" stroke="var(--green)"  stroke-width="3.5" stroke-linecap="round"></line>
+            <line id="taxSupply2"x1="0" y1="0" x2="0" y2="0" stroke="var(--green)"  stroke-width="3.5" stroke-linecap="round" stroke-dasharray="8 4"></line>
+            <!-- price lines -->
+            <line id="taxPc" x1="0" y1="0" x2="0" y2="0" stroke="var(--blue)"  stroke-width="1.5" stroke-dasharray="5 3"></line>
+            <line id="taxPp" x1="0" y1="0" x2="0" y2="0" stroke="var(--green)" stroke-width="1.5" stroke-dasharray="5 3"></line>
+            <line id="taxPe" x1="0" y1="0" x2="0" y2="0" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="5 3"></line>
+            <!-- points -->
+            <circle id="taxEq"  cx="0" cy="0" r="6" fill="#98a2b3" stroke="#fff" stroke-width="2"></circle>
+            <circle id="taxEq2" cx="0" cy="0" r="6" fill="var(--red)" stroke="#fff" stroke-width="2"></circle>
+            <!-- axes -->
+            <line class="axis" x1="50" y1="310" x2="400" y2="310" marker-end="url(#arr2)"></line>
+            <line class="axis" x1="50" y1="310" x2="50" y2="30" marker-end="url(#arr2)"></line>
+            <text class="axis-label" x="406" y="315">Q</text>
+            <text class="axis-label" x="30" y="26">P</text>
+            <text id="txDtag" class="small-label" fill="var(--blue)" x="0" y="0">D</text>
+            <text id="txStag" class="small-label" fill="var(--green)" x="0" y="0">S</text>
+            <text id="txS2tag"class="small-label" fill="var(--green)" x="0" y="0">S'</text>
+            <text id="txPcLbl"class="small-label" fill="var(--blue)" x="0" y="0"></text>
+            <text id="txPpLbl"class="small-label" fill="var(--green)" x="0" y="0"></text>
+            <text id="txPeLbl"class="small-label" fill="var(--muted)" x="0" y="0"></text>
+          </svg>
+
+          <div class="controls" style="margin-top:10px;">
+            <label>
+              従量税 t（単位）
+              <input id="taxSlider" type="range" min="0" max="40" value="20" step="1">
+            </label>
+            <span class="pill" id="taxLabel">20</span>
+          </div>
+
+          <div class="legend" style="margin-top:10px;">
+            <span class="legend-item"><span class="swatch" style="background:rgba(37,99,235,0.3);"></span>CS</span>
+            <span class="legend-item"><span class="swatch" style="background:rgba(22,128,60,0.3);"></span>PS</span>
+            <span class="legend-item"><span class="swatch" style="background:rgba(183,121,31,0.4);"></span>税収</span>
+            <span class="legend-item"><span class="swatch" style="background:rgba(194,65,12,0.4);"></span>死荷重</span>
+          </div>
+        </div>
+
+        <div>
+          <h3>税の帰着（弾力性との関係）</h3>
+          <div class="metrics" style="margin-top:0;">
+            <div class="metric">
+              <span>消費者負担（Pc−Pe）</span>
+              <strong id="consBurden" style="color:var(--blue);">—</strong>
+            </div>
+            <div class="metric">
+              <span>生産者負担（Pe−Pp）</span>
+              <strong id="prodBurden" style="color:var(--green);">—</strong>
+            </div>
+            <div class="metric">
+              <span>税収</span>
+              <strong id="taxRevVal" style="color:var(--amber);">—</strong>
+            </div>
+            <div class="metric">
+              <span>死荷重</span>
+              <strong id="taxDWVal" style="color:var(--red);">—</strong>
+            </div>
+          </div>
+
+          <div class="formula" style="margin-top:12px;">税の帰着 = 需要・供給の弾力性の逆比</div>
+
+          <ul class="rule-list">
+            <li><strong>需要が非弾力的</strong>：消費者が税を多く負担（生活必需品など）。</li>
+            <li><strong>供給が非弾力的</strong>：生産者が税を多く負担（希少財・土地など）。</li>
+            <li><strong>どちらに課税しても</strong>：最終的な負担割合は弾力性で決まり、名目上の課税先とは無関係。</li>
+          </ul>
+
+          <div class="exam-box">
+            <strong>試験のポイント</strong>
+            <p>「税収 &lt; 失われた余剰」→ 差額が死荷重。課税が大きいほど死荷重は急増（面積は2乗で増加）。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================  独占  ============================ -->
+    <section style="margin-top:18px;">
+      <h2>独占市場の死荷重</h2>
+      <p class="lead" style="margin-bottom:14px;">独占企業は限界収入（MR）＝限界費用（MC）の点で生産量を決め、需要曲線上の価格を設定する。完全競争と比べて生産量が少なく価格が高い → 死荷重が発生する。</p>
+
+      <svg id="monoChart" class="chart" viewBox="0 0 680 440" role="img" aria-label="独占市場の死荷重">
+        <defs>
+          <marker id="arr3" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#344054"></path>
+          </marker>
+        </defs>
+        <!-- areas -->
+        <polygon id="monoCS" points="" style="fill:rgba(37,99,235,0.18); stroke:none;"></polygon>
+        <polygon id="monoPS" points="" style="fill:rgba(22,128,60,0.18); stroke:none;"></polygon>
+        <polygon id="monoDW" points="" style="fill:rgba(194,65,12,0.35); stroke:none;"></polygon>
+        <!-- curves -->
+        <!-- D: P = 100 - Q -->
+        <!-- MR: P = 100 - 2Q -->
+        <!-- MC/S: P = 10 + Q/2 -->
+        <line id="mDemand" x1="0" y1="0" x2="0" y2="0" stroke="var(--blue)"  stroke-width="4" stroke-linecap="round"></line>
+        <line id="mMR"     x1="0" y1="0" x2="0" y2="0" stroke="var(--cyan)"  stroke-width="3" stroke-linecap="round" stroke-dasharray="10 4"></line>
+        <line id="mMC"     x1="0" y1="0" x2="0" y2="0" stroke="var(--green)" stroke-width="4" stroke-linecap="round"></line>
+        <!-- key lines -->
+        <line id="mPm"     x1="0" y1="0" x2="0" y2="0" stroke="var(--red)"   stroke-width="1.5" stroke-dasharray="6 3"></line>
+        <line id="mPc"     x1="0" y1="0" x2="0" y2="0" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="6 3"></line>
+        <line id="mQm"     x1="0" y1="0" x2="0" y2="0" stroke="var(--red)"   stroke-width="1.5" stroke-dasharray="6 3"></line>
+        <line id="mQc"     x1="0" y1="0" x2="0" y2="0" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="6 3"></line>
+        <!-- points -->
+        <circle id="mPtMono" cx="0" cy="0" r="8" fill="var(--red)"   stroke="#fff" stroke-width="3"></circle>
+        <circle id="mPtComp" cx="0" cy="0" r="8" fill="var(--muted)" stroke="#fff" stroke-width="3"></circle>
+        <!-- axes -->
+        <line class="axis" x1="70" y1="400" x2="620" y2="400" marker-end="url(#arr3)"></line>
+        <line class="axis" x1="70" y1="400" x2="70" y2="40"  marker-end="url(#arr3)"></line>
+        <text class="axis-label" x="625" y="406">Q</text>
+        <text class="axis-label" x="46"  y="34">P</text>
+        <!-- labels -->
+        <text id="mDtag"   class="chart-label" fill="var(--blue)"  x="0" y="0">D</text>
+        <text id="mMRtag"  class="chart-label" fill="var(--cyan)"  x="0" y="0">MR</text>
+        <text id="mMCtag"  class="chart-label" fill="var(--green)" x="0" y="0">MC＝S</text>
+        <text id="mPmLbl"  class="small-label" fill="var(--red)"   x="0" y="0">Pm（独占価格）</text>
+        <text id="mPcLbl"  class="small-label" fill="var(--muted)" x="0" y="0">Pc（競争価格）</text>
+        <text id="mQmLbl"  class="small-label" fill="var(--red)"   x="0" y="0">Qm</text>
+        <text id="mQcLbl"  class="small-label" fill="var(--muted)" x="0" y="0">Qc</text>
+        <text id="monoDWlbl" class="chart-label" fill="var(--red)" x="0" y="0" font-size="13">死荷重</text>
+        <text id="monoCSLbl" class="chart-label" fill="var(--blue)" x="0" y="0" font-size="12">CS</text>
+        <text id="monoPSLbl" class="chart-label" fill="var(--green)" x="0" y="0" font-size="12">PS</text>
+      </svg>
+
+      <div class="metrics" style="max-width:660px; margin-top:14px;">
+        <div class="metric">
+          <span>独占価格 Pm</span>
+          <strong style="color:var(--red);">60</strong>
+        </div>
+        <div class="metric">
+          <span>競争価格 Pc</span>
+          <strong style="color:var(--muted);">40</strong>
+        </div>
+        <div class="metric">
+          <span>独占数量 Qm</span>
+          <strong style="color:var(--red);">40</strong>
+        </div>
+        <div class="metric">
+          <span>競争数量 Qc</span>
+          <strong style="color:var(--muted);">60</strong>
+        </div>
+      </div>
+
+      <ul class="rule-list" style="margin-top:14px;">
+        <li><strong>独占の特徴</strong>：MR ＝ MC で生産量を決定 → 需要曲線上に価格を設定 → Pm &gt; Pc, Qm &lt; Qc</li>
+        <li><strong>死荷重</strong>：Qm ～ Qc の間で取引されなかった余剰。完全競争ではこの部分が CS＋PS になっていた。</li>
+        <li><strong>完全価格差別</strong>：各消費者の留保価格で販売 → 消費者余剰ゼロ・死荷重ゼロ（生産量は競争水準と同一）。</li>
+      </ul>
+    </section>
+
+    <p class="source">対応ノート: 消費者余剰と生産者余剰.md</p>
+  </main>
+
+  <script>
+    // ===== 共通ユーティリティ =====
+    const C = { L: 70, T: 50, R: 600, B: 430, maxQ: 100, maxP: 110 };
+    const sx = (q, c) => c.L + (q / c.maxQ) * (c.R - c.L);
+    const sy = (p, c) => c.B - (p / c.maxP) * (c.B - c.T);
+
+    // ===== メインチャート =====
+    // 需要: P = 100 - Q  供給: P = Q  → 均衡 Q=50, P=50
+    const MC = { L: 70, T: 50, R: 600, B: 430, maxQ: 100, maxP: 110 };
+    const demand = q => 100 - q;   // P = 100 - Q
+    const supply = q => q;         // P = Q
+    // 均衡: 100 - Q = Q → Q=50, P=50
+    const EQ = { q: 50, p: 50 };
+
+    function drawMainGrid() {
+      const g = document.getElementById("gridLayer");
+      let html = "";
+      [20, 40, 60, 80, 100].forEach(v => {
+        const x = sx(v, MC); const y = sy(v, MC);
+        html += `<line class="grid-line" x1="${MC.L}" y1="${y}" x2="${MC.R+20}" y2="${y}"></line>`;
+        html += `<line class="grid-line" x1="${x}" y1="${MC.T}" x2="${x}" y2="${MC.B}"></line>`;
+        html += `<text class="small-label" x="${x - 8}" y="${MC.B + 20}">${v}</text>`;
+        html += `<text class="small-label" x="${MC.L - 32}" y="${y + 5}">${v}</text>`;
+      });
+      g.innerHTML = html;
+    }
+
+    function updateMain() {
+      const slider = document.getElementById("priceSlider");
+      const P = Number(slider.value);
+
+      // demand side: Q at P
+      const Qd = 100 - P;  // 需要量
+      // supply side: Q at P
+      const Qs = P;         // 供給量
+      // actual transaction = min(Qd, Qs) — but for price control visualization:
+      // if P < Peq → shortage → Q = Qs (supply limited)
+      // if P > Peq → surplus  → Q = Qd (demand limited)
+      const Q = P <= EQ.p ? Qs : Qd;
+
+      // points in SVG coords
+      const px = sx(Q, MC), py = sy(P, MC);
+      const eqX = sx(EQ.q, MC), eqY = sy(EQ.p, MC);
+
+      // demand endpoints: (0,100) and (100,0)
+      const d0x = sx(0, MC), d0y = sy(100, MC);
+      const d1x = sx(100, MC), d1y = sy(0, MC);
+      // supply endpoints: (0,0) and (100,100)
+      const s0x = sx(0, MC), s0y = sy(0, MC);
+      const s1x = sx(100, MC), s1y = sy(100, MC);
+
+      document.getElementById("demandLine").setAttribute("x1", d0x);
+      document.getElementById("demandLine").setAttribute("y1", d0y);
+      document.getElementById("demandLine").setAttribute("x2", d1x);
+      document.getElementById("demandLine").setAttribute("y2", d1y);
+      document.getElementById("supplyLine").setAttribute("x1", s0x);
+      document.getElementById("supplyLine").setAttribute("y1", s0y);
+      document.getElementById("supplyLine").setAttribute("x2", s1x);
+      document.getElementById("supplyLine").setAttribute("y2", s1y);
+
+      document.getElementById("demandTag").setAttribute("x", d0x + 6);
+      document.getElementById("demandTag").setAttribute("y", d0y + 4);
+      document.getElementById("supplyTag").setAttribute("x", s1x - 20);
+      document.getElementById("supplyTag").setAttribute("y", s1y - 8);
+
+      // price line
+      const plEl = document.getElementById("priceLine");
+      plEl.setAttribute("x1", MC.L); plEl.setAttribute("x2", px);
+      plEl.setAttribute("y1", py);   plEl.setAttribute("y2", py);
+
+      // equilibrium point
+      document.getElementById("eqPoint").setAttribute("cx", eqX);
+      document.getElementById("eqPoint").setAttribute("cy", eqY);
+      document.getElementById("qpPoint").setAttribute("cx", px);
+      document.getElementById("qpPoint").setAttribute("cy", py);
+
+      // ---- CS area ----
+      // Triangle: top of demand (0,100) → point at P on demand → intersection at price line left
+      // CS = area above price line, below demand curve, from Q=0 to Q=Qd
+      // At price P, demand quantity = 100 - P
+      // CS triangle vertices: (0, P_demand_intercept=100), (0, P), (Qd, P)
+      const csTopX = sx(0, MC), csTopY = sy(100, MC);
+      const csLeftX = sx(0, MC), csLeftY = sy(P, MC);
+      const csRightX = sx(Qd, MC), csRightY = sy(P, MC);
+      // but Qd is where demand hits price P. And we need the demand curve point at Qd.
+      // CS polygon: (0,100)→(Qd, P) along demand, then back at price P to (0,P)
+      document.getElementById("csArea").setAttribute("points",
+        `${csTopX},${csTopY} ${csRightX},${csRightY} ${csLeftX},${csLeftY}`);
+
+      // ---- PS area ----
+      // PS = area below price line, above supply curve, from Q=0 to Q=Qs
+      const psBottomX = sx(0, MC), psBottomY = sy(0, MC);
+      const psRightX = sx(Qs, MC), psRightY = sy(P, MC);
+      const psLeftX  = sx(0, MC),  psLeftY  = sy(P, MC);
+      document.getElementById("psArea").setAttribute("points",
+        `${psLeftX},${psLeftY} ${psRightX},${psRightY} ${psBottomX},${psBottomY}`);
+
+      // ---- DW area ----
+      // Only exists when P ≠ Peq
+      // If P < Peq (price ceiling): DW = triangle (Qs, P_supply=Qs) → (Qs, demand at Qs=100-Qs) → (Qeq, Peq)
+      // If P > Peq (price floor): DW = triangle (Qd, P) → (Qd, supply at Qd) → (Qeq, Peq)
+      let dwPts = "";
+      if (Math.abs(P - EQ.p) > 1) {
+        if (P < EQ.p) {
+          // Q = Qs = P, demand at Qs = 100 - Qs
+          const dwAx = sx(Q, MC), dwAy = sy(P, MC);           // (Qs, P) — price ceiling point
+          const dwBx = sx(Q, MC), dwBy = sy(demand(Q), MC);   // (Qs, demand(Qs))
+          const dwCx = eqX, dwCy = eqY;                        // equilibrium
+          dwPts = `${dwAx},${dwAy} ${dwBx},${dwBy} ${dwCx},${dwCy}`;
+        } else {
+          // Q = Qd = 100 - P, supply at Qd = Qd
+          const dwAx = sx(Q, MC), dwAy = sy(P, MC);            // (Qd, P) — price floor point
+          const dwBx = sx(Q, MC), dwBy = sy(supply(Q), MC);   // (Qd, supply(Qd))
+          const dwCx = eqX, dwCy = eqY;
+          dwPts = `${dwAx},${dwAy} ${dwBx},${dwBy} ${dwCx},${dwCy}`;
+        }
+      }
+      document.getElementById("dwArea").setAttribute("points", dwPts);
+
+      // ---- compute surplus values ----
+      // Use unit=1 scale (each unit = 1)
+      const CS = 0.5 * Qd * (100 - P);
+      const PS = 0.5 * Qs * P;
+      const maxCS = 0.5 * EQ.q * (100 - EQ.p);  // = 1250
+      const maxPS = 0.5 * EQ.q * EQ.p;           // = 1250
+      const maxW  = maxCS + maxPS;                // = 2500
+      const actualW = CS + PS;
+      const DW = maxW - actualW;
+
+      document.getElementById("csValue").textContent = CS.toFixed(0);
+      document.getElementById("psValue").textContent = PS.toFixed(0);
+      document.getElementById("totalValue").textContent = actualW.toFixed(0);
+      document.getElementById("dwValue").textContent = DW > 1 ? DW.toFixed(0) : "0";
+
+      // labels on chart
+      const csLbl = document.getElementById("csLabel");
+      csLbl.setAttribute("x", sx(Qd * 0.25, MC));
+      csLbl.setAttribute("y", sy(P + (100 - P) * 0.55, MC));
+      csLbl.textContent = `CS=${CS.toFixed(0)}`;
+
+      const psLbl = document.getElementById("psLabel");
+      psLbl.setAttribute("x", sx(Qs * 0.25, MC));
+      psLbl.setAttribute("y", sy(P * 0.45, MC));
+      psLbl.textContent = `PS=${PS.toFixed(0)}`;
+
+      const dwLbl = document.getElementById("dwLabel");
+      if (DW > 10) {
+        dwLbl.setAttribute("x", sx(Q + (EQ.q - Q) * 0.5, MC) - 10);
+        dwLbl.setAttribute("y", sy(P < EQ.p ? P + (EQ.p - P) * 0.5 : EQ.p + (P - EQ.p) * 0.5, MC));
+        dwLbl.textContent = `DW=${DW.toFixed(0)}`;
+      } else {
+        dwLbl.textContent = "";
+      }
+
+      // pill label
+      const lbl = document.getElementById("priceLabel");
+      if (Math.abs(P - EQ.p) <= 1) {
+        lbl.textContent = "均衡価格";
+        lbl.style.background = "#ecfdf3"; lbl.style.color = "#067647";
+      } else if (P < EQ.p) {
+        lbl.textContent = `P=${P}（上限規制）`;
+        lbl.style.background = "#fff1f0"; lbl.style.color = "#b42318";
+      } else {
+        lbl.textContent = `P=${P}（下限規制）`;
+        lbl.style.background = "#fff8ed"; lbl.style.color = "#8a4b0f";
+      }
+    }
+
+    drawMainGrid();
+    updateMain();
+    document.getElementById("priceSlider").addEventListener("input", updateMain);
+
+    // ===== 課税チャート =====
+    // 需要: P = 90 - Q  供給: P = 10 + Q  均衡: Q=40, P=50
+    // 課税t → 供給: P = 10 + t + Q → 新均衡: Q=(80-t)/2, Pc=90-(80-t)/2, Pp=Pc-t
+    const TC = { L: 50, T: 30, R: 390, B: 300, maxQ: 90, maxP: 110 };
+    const td = q => 90 - q;
+    const ts = q => 10 + q;
+
+    function updateTax() {
+      const t = Number(document.getElementById("taxSlider").value);
+      document.getElementById("taxLabel").textContent = t;
+
+      const Qe = 40, Pe = 50;  // 課税前均衡
+      const Qt = (80 - t) / 2;
+      const Pc = 90 - Qt;
+      const Pp = Pc - t;
+
+      // demand: (0,90) to (90,0)
+      const setLine = (id, x1, y1, x2, y2) => {
+        const el = document.getElementById(id);
+        ["x1","y1","x2","y2"].forEach((a,i)=>el.setAttribute(a,[x1,y1,x2,y2][i]));
+      };
+      setLine("taxDemand", sx(0,TC), sy(90,TC), sx(90,TC), sy(0,TC));
+      // supply before: (0,10) to (80,90)
+      setLine("taxSupply",  sx(0,TC), sy(10,TC), sx(80,TC), sy(90,TC));
+      // supply after tax: (0,10+t) to (80-t,90)
+      setLine("taxSupply2", sx(0,TC), sy(10+t,TC), sx(80-t,TC), sy(90,TC));
+
+      document.getElementById("txDtag").setAttribute("x", sx(88,TC)-14); document.getElementById("txDtag").setAttribute("y", sy(2,TC)+4);
+      document.getElementById("txStag").setAttribute("x", sx(79,TC)-14); document.getElementById("txStag").setAttribute("y", sy(89,TC)-6);
+      document.getElementById("txS2tag").setAttribute("x", sx(79-t,TC)-14); document.getElementById("txS2tag").setAttribute("y", sy(89-t,TC)-6);
+
+      // price lines
+      setLine("taxPc", TC.L, sy(Pc,TC), sx(Qt,TC), sy(Pc,TC));
+      setLine("taxPp", TC.L, sy(Pp,TC), sx(Qt,TC), sy(Pp,TC));
+      setLine("taxPe", TC.L, sy(Pe,TC), sx(Qe,TC), sy(Pe,TC));
+
+      document.getElementById("txPcLbl").setAttribute("x", TC.L-2); document.getElementById("txPcLbl").setAttribute("y", sy(Pc,TC)-4); document.getElementById("txPcLbl").textContent = `Pc=${Pc.toFixed(0)}`;
+      document.getElementById("txPpLbl").setAttribute("x", TC.L-2); document.getElementById("txPpLbl").setAttribute("y", sy(Pp,TC)+12); document.getElementById("txPpLbl").textContent = `Pp=${Pp.toFixed(0)}`;
+      document.getElementById("txPeLbl").setAttribute("x", TC.L-2); document.getElementById("txPeLbl").setAttribute("y", sy(Pe,TC)-4); document.getElementById("txPeLbl").textContent = `Pe=${Pe}`;
+
+      // equilibrium points
+      document.getElementById("taxEq").setAttribute("cx",  sx(Qe,TC)); document.getElementById("taxEq").setAttribute("cy",  sy(Pe,TC));
+      document.getElementById("taxEq2").setAttribute("cx", sx(Qt,TC)); document.getElementById("taxEq2").setAttribute("cy", sy(Pc,TC));
+
+      // areas
+      // CS after tax: triangle (0,90) → (Qt,Pc) → (0,Pc)
+      document.getElementById("taxCS").setAttribute("points",
+        `${sx(0,TC)},${sy(90,TC)} ${sx(Qt,TC)},${sy(Pc,TC)} ${sx(0,TC)},${sy(Pc,TC)}`);
+      // PS after tax: triangle (0,10) → (0,Pp) → (Qt,Pp)   (supply from Pp up to Qt)
+      document.getElementById("taxPS").setAttribute("points",
+        `${sx(0,TC)},${sy(10,TC)} ${sx(0,TC)},${sy(Pp,TC)} ${sx(Qt,TC)},${sy(Pp,TC)}`);
+      // Tax revenue: rectangle Qt × (Pc-Pp) = Qt × t
+      document.getElementById("taxRev").setAttribute("points",
+        `${sx(0,TC)},${sy(Pc,TC)} ${sx(Qt,TC)},${sy(Pc,TC)} ${sx(Qt,TC)},${sy(Pp,TC)} ${sx(0,TC)},${sy(Pp,TC)}`);
+      // DW: triangle (Qt,Pc) → (Qt,Pp) → (Qe,Pe)
+      if (t > 0) {
+        document.getElementById("taxDW").setAttribute("points",
+          `${sx(Qt,TC)},${sy(Pc,TC)} ${sx(Qt,TC)},${sy(Pp,TC)} ${sx(Qe,TC)},${sy(Pe,TC)}`);
+      } else {
+        document.getElementById("taxDW").setAttribute("points","");
+      }
+
+      // metrics
+      const consBurden = Pc - Pe;
+      const prodBurden = Pe - Pp;
+      const taxRev = Qt * t;
+      const DW = 0.5 * (Qe - Qt) * t;
+
+      document.getElementById("consBurden").textContent = consBurden.toFixed(1);
+      document.getElementById("prodBurden").textContent = prodBurden.toFixed(1);
+      document.getElementById("taxRevVal").textContent  = taxRev.toFixed(0);
+      document.getElementById("taxDWVal").textContent   = DW.toFixed(1);
+    }
+
+    updateTax();
+    document.getElementById("taxSlider").addEventListener("input", updateTax);
+
+    // ===== 独占チャート =====
+    // D: P = 100 - Q   MR: P = 100 - 2Q   MC: P = 10 + Q/2
+    // 独占均衡: MR=MC → 100-2Q = 10+Q/2 → 90 = 2.5Q → Q=36, Pm = 100-36=64
+    // 完全競争: D=MC → 100-Q = 10+Q/2 → 90 = 1.5Q → Q=60, Pc = 100-60=40
+    const MO = { L: 70, T: 40, R: 600, B: 400, maxQ: 110, maxP: 110 };
+    const mDemand = q => 100 - q;
+    const mMR     = q => 100 - 2*q;
+    const mMC     = q => 10 + q/2;
+
+    function drawMono() {
+      const Qm = 36, Pm = 64;
+      const Qc = 60, Pc = 40;
+
+      const setLine = (id, x1, y1, x2, y2) => {
+        const el = document.getElementById(id);
+        ["x1","y1","x2","y2"].forEach((a,i)=>el.setAttribute(a,[x1,y1,x2,y2][i]));
+      };
+
+      // D: Q=0→P=100, Q=100→P=0
+      setLine("mDemand", sx(0,MO), sy(100,MO), sx(100,MO), sy(0,MO));
+      // MR: Q=0→MR=100, Q=50→MR=0
+      setLine("mMR",     sx(0,MO), sy(100,MO), sx(50,MO),  sy(0,MO));
+      // MC: Q=0→P=10, Q=100→P=60
+      setLine("mMC",     sx(0,MO), sy(10,MO),  sx(100,MO), sy(60,MO));
+
+      // label positions
+      document.getElementById("mDtag").setAttribute("x",  sx(98,MO)-14); document.getElementById("mDtag").setAttribute("y",  sy(2,MO)+12);
+      document.getElementById("mMRtag").setAttribute("x", sx(51,MO)+4);  document.getElementById("mMRtag").setAttribute("y", sy(0,MO)-4);
+      document.getElementById("mMCtag").setAttribute("x", sx(100,MO)-50);document.getElementById("mMCtag").setAttribute("y", sy(60,MO)-8);
+
+      // dashed lines
+      setLine("mPm", MO.L, sy(Pm,MO), sx(Qm,MO), sy(Pm,MO));
+      setLine("mPc", MO.L, sy(Pc,MO), sx(Qc,MO), sy(Pc,MO));
+      setLine("mQm", sx(Qm,MO), sy(Pm,MO), sx(Qm,MO), MO.B);
+      setLine("mQc", sx(Qc,MO), sy(Pc,MO), sx(Qc,MO), MO.B);
+
+      document.getElementById("mPmLbl").setAttribute("x", MO.L+2); document.getElementById("mPmLbl").setAttribute("y", sy(Pm,MO)-5);
+      document.getElementById("mPcLbl").setAttribute("x", MO.L+2); document.getElementById("mPcLbl").setAttribute("y", sy(Pc,MO)-5);
+      document.getElementById("mQmLbl").setAttribute("x", sx(Qm,MO)-12); document.getElementById("mQmLbl").setAttribute("y", MO.B+16);
+      document.getElementById("mQcLbl").setAttribute("x", sx(Qc,MO)-10); document.getElementById("mQcLbl").setAttribute("y", MO.B+16);
+
+      // equilibrium points
+      document.getElementById("mPtMono").setAttribute("cx", sx(Qm,MO)); document.getElementById("mPtMono").setAttribute("cy", sy(Pm,MO));
+      document.getElementById("mPtComp").setAttribute("cx", sx(Qc,MO)); document.getElementById("mPtComp").setAttribute("cy", sy(Pc,MO));
+
+      // CS: above Pm, below demand, Q 0~Qm → triangle (0,100),(Qm,Pm),(0,Pm)
+      document.getElementById("monoCS").setAttribute("points",
+        `${sx(0,MO)},${sy(100,MO)} ${sx(Qm,MO)},${sy(Pm,MO)} ${sx(0,MO)},${sy(Pm,MO)}`);
+      // PS: below Pm, above MC (supply), Q 0~Qm
+      // MC at Qm = 10 + 36/2 = 28
+      document.getElementById("monoPS").setAttribute("points",
+        `${sx(0,MO)},${sy(Pm,MO)} ${sx(Qm,MO)},${sy(Pm,MO)} ${sx(Qm,MO)},${sy(mMC(Qm),MO)} ${sx(0,MO)},${sy(mMC(0),MO)}`);
+      // DW: triangle (Qm,Pm) → (Qc,Pc) → (Qm,MC(Qm))
+      document.getElementById("monoDW").setAttribute("points",
+        `${sx(Qm,MO)},${sy(Pm,MO)} ${sx(Qc,MO)},${sy(Pc,MO)} ${sx(Qm,MO)},${sy(mMC(Qm),MO)}`);
+
+      // label positions
+      document.getElementById("monoDWlbl").setAttribute("x", sx(Qm+5,MO)); document.getElementById("monoDWlbl").setAttribute("y", sy((Pm+Pc)/2,MO));
+      document.getElementById("monoCSLbl").setAttribute("x", sx(10,MO)); document.getElementById("monoCSLbl").setAttribute("y", sy((100+Pm)/2,MO));
+      document.getElementById("monoPSLbl").setAttribute("x", sx(10,MO)); document.getElementById("monoPSLbl").setAttribute("y", sy((Pm+mMC(0))/2,MO));
+    }
+
+    drawMono();
+  </script>
+</body>
+</html>
