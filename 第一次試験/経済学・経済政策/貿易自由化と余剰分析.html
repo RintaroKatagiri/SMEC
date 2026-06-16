@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>貿易自由化と余剰分析</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --line: #344054;
+      --border: #d9e0e8;
+      --blue: #2563eb;
+      --green: #16803c;
+      --amber: #b7791f;
+      --red: #c2410c;
+      --shadow: 0 8px 24px rgba(23, 32, 51, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.65;
+    }
+
+    main {
+      width: min(1160px, calc(100% - 32px));
+      margin: 28px auto 44px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(24px, 4vw, 36px);
+      line-height: 1.2;
+    }
+
+    h2 { margin: 0 0 12px; font-size: 20px; }
+    h3 { margin: 0 0 8px; font-size: 16px; }
+    p { margin: 8px 0; }
+
+    .lead {
+      max-width: 900px;
+      margin: 0 0 18px;
+      color: var(--muted);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    section, aside {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .chart {
+      width: 100%;
+      min-height: 360px;
+      aspect-ratio: 1.32 / 1;
+      display: block;
+    }
+
+    .area-1 { fill: rgba(37, 99, 235, 0.16); stroke: rgba(37, 99, 235, 0.55); }
+    .area-2 { fill: rgba(37, 99, 235, 0.22); stroke: rgba(37, 99, 235, 0.55); }
+    .area-3 { fill: rgba(22, 128, 60, 0.22); stroke: rgba(22, 128, 60, 0.6); }
+    .area-4 { fill: rgba(183, 121, 31, 0.24); stroke: rgba(183, 121, 31, 0.65); }
+
+    .axis, .curve {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .axis { stroke: var(--line); stroke-width: 2.4; }
+    .curve { stroke-width: 4; }
+    .demand { stroke: var(--blue); }
+    .supply { stroke: var(--green); }
+    .dash {
+      stroke: #98a2b3;
+      stroke-width: 1.8;
+      stroke-dasharray: 6 6;
+    }
+
+    .label {
+      fill: var(--line);
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .small {
+      fill: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .area-label {
+      fill: var(--text);
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .point {
+      fill: var(--text);
+      stroke: #fff;
+      stroke-width: 3;
+    }
+
+    .cards {
+      display: grid;
+      gap: 10px;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fafbfc;
+    }
+
+    .card strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .formula {
+      margin: 12px 0;
+      padding: 12px;
+      border-left: 4px solid var(--green);
+      border-radius: 6px;
+      background: #f0fdf4;
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 9px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th { background: #f2f4f7; }
+
+    .ok { color: var(--green); font-weight: 800; }
+    .ng { color: var(--red); font-weight: 800; }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 560px) {
+      main { width: min(100% - 20px, 1160px); margin-top: 20px; }
+      section, aside { padding: 14px; }
+      .chart { min-height: 280px; }
+      table { font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>貿易自由化と余剰分析</h1>
+    <p class="lead">
+      国際価格 <strong>Pf</strong> が閉鎖経済の国内価格 <strong>P0</strong> より高いとき、国内価格は上昇し、国内生産は増え、国内消費は減る。図の面積を使って、消費者余剰・生産者余剰・社会的総余剰を読み取る。
+    </p>
+
+    <div class="layout">
+      <section>
+        <h2>輸出自由化の基本図</h2>
+        <svg class="chart" viewBox="0 0 880 640" role="img" aria-label="国際価格が国内均衡価格より高い場合の輸出自由化と余剰変化">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#344054"></path>
+            </marker>
+          </defs>
+
+          <!-- Areas matching the exam figure -->
+          <polygon class="area-1" points="120,170 260,170 260,310 120,310"></polygon>
+          <polygon class="area-2" points="260,170 430,310 260,310"></polygon>
+          <polygon class="area-3" points="260,170 650,170 430,310"></polygon>
+          <polygon class="area-4" points="430,310 650,170 650,310"></polygon>
+
+          <!-- Reference lines -->
+          <line class="dash" x1="120" y1="170" x2="720" y2="170"></line>
+          <line class="dash" x1="120" y1="310" x2="720" y2="310"></line>
+          <line class="dash" x1="260" y1="170" x2="260" y2="540"></line>
+          <line class="dash" x1="430" y1="310" x2="430" y2="540"></line>
+          <line class="dash" x1="650" y1="170" x2="650" y2="540"></line>
+
+          <!-- Demand and supply -->
+          <line class="curve demand" x1="120" y1="55" x2="700" y2="532"></line>
+          <line class="curve supply" x1="120" y1="507" x2="700" y2="138"></line>
+
+          <!-- Axes -->
+          <line class="axis" x1="120" y1="540" x2="790" y2="540" marker-end="url(#arrow)"></line>
+          <line class="axis" x1="120" y1="540" x2="120" y2="55" marker-end="url(#arrow)"></line>
+
+          <!-- Equilibrium point -->
+          <circle class="point" cx="430" cy="310" r="8"></circle>
+
+          <!-- Labels -->
+          <text class="label" x="798" y="546">数量</text>
+          <text class="label" x="92" y="48">価格</text>
+          <text class="label" x="714" y="528" fill="#2563eb">D</text>
+          <text class="label" x="714" y="142" fill="#16803c">S</text>
+          <text class="label" x="445" y="298">E</text>
+
+          <text class="small" x="75" y="176">Pf</text>
+          <text class="small" x="76" y="316">P0</text>
+          <text class="small" x="241" y="574">Q1</text>
+          <text class="small" x="411" y="574">Q0</text>
+          <text class="small" x="631" y="574">Q2</text>
+
+          <text class="area-label" x="174" y="250">(1)</text>
+          <text class="area-label" x="315" y="258">(2)</text>
+          <text class="area-label" x="478" y="238">(3)</text>
+          <text class="area-label" x="555" y="263">(4)</text>
+        </svg>
+      </section>
+
+      <aside>
+        <h2>面積の読み方</h2>
+        <div class="cards">
+          <div class="card">
+            <strong>国内消費量</strong>
+            <p>価格上昇により需要量は <strong>Q0 から Q1 に減少</strong>する。</p>
+          </div>
+          <div class="card">
+            <strong>国内生産量</strong>
+            <p>価格上昇により供給量は <strong>Q0 から Q2 に増加</strong>する。</p>
+          </div>
+          <div class="card">
+            <strong>輸出量</strong>
+            <p>国内生産量と国内消費量の差で、<strong>Q2 - Q1</strong> となる。</p>
+          </div>
+        </div>
+
+        <div class="formula">
+          消費者余剰減少 = (1) + (2)<br>
+          生産者余剰増加 = (1) + (2) + (3)<br>
+          社会的総余剰増加 = (3)
+        </div>
+
+        <p>
+          <strong>(4)</strong> は追加生産にかかる費用部分。生産者余剰は「価格線の下側、供給曲線の上側」なので、供給曲線の下側にある (4) は含めない。
+        </p>
+      </aside>
+    </div>
+
+    <section style="margin-top:18px;">
+      <h2>正誤判断の対応</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>見るポイント</th>
+            <th>判断</th>
+            <th>理由</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>国内消費量は Q0 から Q1 に減る</td>
+            <td class="ok">正</td>
+            <td>国際価格 Pf が P0 より高く、国内価格が上がるため需要量が減る。</td>
+          </tr>
+          <tr>
+            <td>消費者余剰の減少分は (2) だけ</td>
+            <td class="ng">誤</td>
+            <td>正しくは (1) + (2)。既存消費分にも価格上昇の影響がある。</td>
+          </tr>
+          <tr>
+            <td>生産者余剰の増加分に (4) を含める</td>
+            <td class="ng">誤</td>
+            <td>正しくは (1) + (2) + (3)。供給曲線の下側は費用であり余剰ではない。</td>
+          </tr>
+          <tr>
+            <td>社会的総余剰の増加分は (3)</td>
+            <td class="ok">正</td>
+            <td>生産者余剰増加分から消費者余剰減少分を差し引くと (3) だけ残る。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section style="margin-top:18px;">
+      <h2>試験での手順</h2>
+      <div class="cards">
+        <div class="card">
+          <strong>1. 国際価格と国内価格を比較する</strong>
+          <p>Pf が P0 より高ければ輸出ケース。低ければ輸入ケース。</p>
+        </div>
+        <div class="card">
+          <strong>2. Pf の高さで需要量と供給量を読む</strong>
+          <p>需要曲線から Q1、供給曲線から Q2 を読む。</p>
+        </div>
+        <div class="card">
+          <strong>3. 余剰は面積で読む</strong>
+          <p>消費者余剰は需要曲線と価格線の間。生産者余剰は価格線と供給曲線の間。</p>
+        </div>
+        <div class="card">
+          <strong>4. 総余剰は差し引きで見る</strong>
+          <p>社会的総余剰の変化は、増えた余剰から減った余剰を差し引く。</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
