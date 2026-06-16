@@ -12,6 +12,9 @@
   .legend-item { margin: 7px 0; font-size: 13px; line-height: 1.5; }
   .note { background: #e3f2fd; border-left: 4px solid #1565c0; padding: 10px 14px; margin-top: 12px; font-size: 13px; line-height: 1.7; border-radius: 4px; }
   .note strong { color: #0d47a1; }
+  .section { margin-top: 28px; }
+  .formula { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 12px 14px; font-size: 13px; line-height: 1.7; margin-top: 12px; }
+  .formula strong { color: #6a1b9a; }
   table { border-collapse: collapse; font-size: 12px; margin-top: 12px; }
   td, th { border: 1px solid #ccc; padding: 5px 8px; }
   th { background: #e3f2fd; }
@@ -141,6 +144,94 @@
     c: 資本投入量増加 → 労働の MRP 上昇 → D 右シフト → W 上昇 ✓
   </div>
 </div>
+</div>
+
+<div class="section">
+  <h2>需要独占（買い手独占）の労働市場</h2>
+  <div class="container">
+    <svg width="640" height="460" style="background:white;border:1px solid #ddd;border-radius:8px;">
+      <defs>
+        <marker id="arrow2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#333"/>
+        </marker>
+      </defs>
+
+      <!-- 座標系: svgX=80+N*70, svgY=410-W*38 -->
+      <!-- S: W=1+0.8N, MLC: W=1+1.6N, D(MRP): W=8-0.6N -->
+      <!-- 競争均衡: D=S → N=5, W=5 -->
+      <!-- 需要独占: D=MLC → N=3.2, MRP=6.1, 賃金はS上でW=3.5 -->
+
+      <!-- 軸 -->
+      <line x1="80" y1="410" x2="80" y2="35" stroke="#333" stroke-width="2" marker-end="url(#arrow2)"/>
+      <line x1="80" y1="410" x2="605" y2="410" stroke="#333" stroke-width="2" marker-end="url(#arrow2)"/>
+      <text x="52" y="28" font-size="14" fill="#333">賃金率</text>
+      <text x="608" y="415" font-size="14" fill="#333">労働量</text>
+      <text x="62" y="416" font-size="13" fill="#333">O</text>
+
+      <!-- 需要独占による死荷重のイメージ: E_c, M, F で囲まれる領域 -->
+      <polygon points="430,220 303,179 303,275" fill="#ffcdd2" opacity="0.55"/>
+
+      <!-- 労働供給曲線 S -->
+      <line x1="80" y1="372" x2="570" y2="159" stroke="#f57f17" stroke-width="2.5"/>
+      <text x="574" y="160" font-size="14" fill="#f57f17" font-weight="bold">S</text>
+
+      <!-- 限界労働費用 MLC -->
+      <line x1="80" y1="372" x2="472" y2="31" stroke="#6a1b9a" stroke-width="2.5"/>
+      <text x="476" y="34" font-size="14" fill="#6a1b9a" font-weight="bold">MLC</text>
+
+      <!-- 労働需要曲線 D = MRP -->
+      <line x1="80" y1="106" x2="584" y2="270" stroke="#1565c0" stroke-width="2.5"/>
+      <text x="588" y="274" font-size="14" fill="#1565c0" font-weight="bold">D = MRP</text>
+
+      <!-- 競争均衡 E_c -->
+      <circle cx="430" cy="220" r="6" fill="#d32f2f"/>
+      <line x1="80" y1="220" x2="430" y2="220" stroke="#555" stroke-width="1.3" stroke-dasharray="5,3"/>
+      <line x1="430" y1="220" x2="430" y2="410" stroke="#555" stroke-width="1.3" stroke-dasharray="5,3"/>
+      <text x="438" y="216" font-size="14" fill="#d32f2f" font-weight="bold">E_c</text>
+      <text x="51" y="225" font-size="13" fill="#333" font-weight="bold">W_c</text>
+      <text x="421" y="432" font-size="13" fill="#333" font-weight="bold">N_c</text>
+
+      <!-- 需要独占の雇用決定点 M: MLC = MRP -->
+      <circle cx="303" cy="179" r="6" fill="#6a1b9a"/>
+      <line x1="303" y1="179" x2="303" y2="410" stroke="#6a1b9a" stroke-width="1.3" stroke-dasharray="5,3"/>
+      <text x="311" y="175" font-size="14" fill="#6a1b9a" font-weight="bold">M（MRP=MLC）</text>
+
+      <!-- 需要独占賃金: 同じN_mで供給曲線から読む -->
+      <circle cx="303" cy="275" r="5" fill="#f57f17"/>
+      <line x1="80" y1="275" x2="303" y2="275" stroke="#f57f17" stroke-width="1.3" stroke-dasharray="5,3"/>
+      <text x="51" y="280" font-size="13" fill="#333" font-weight="bold">W_m</text>
+      <text x="294" y="432" font-size="13" fill="#333" font-weight="bold">N_m</text>
+      <text x="309" y="291" font-size="12" fill="#f57f17" font-weight="bold">賃金はS上で決まる</text>
+
+      <!-- ラベル -->
+      <text x="342" y="252" font-size="12" fill="#c62828" font-weight="bold">死荷重</text>
+      <text x="92" y="96" font-size="12" fill="#1565c0">企業の労働需要</text>
+      <text x="98" y="360" font-size="12" fill="#f57f17">労働供給</text>
+    </svg>
+
+    <div>
+      <div class="legend">
+        <h3>需要独占の読み方</h3>
+        <div class="legend-item" style="color:#1565c0"><strong>D = MRP</strong>: 追加的な労働から得られる収入</div>
+        <div class="legend-item" style="color:#f57f17"><strong>S</strong>: 労働供給曲線。企業が実際に支払う賃金はここから読む</div>
+        <div class="legend-item" style="color:#6a1b9a"><strong>MLC</strong>: 限界労働費用。雇用を増やすには賃金を上げる必要があるため、Sより上に位置する</div>
+        <hr/>
+        <div class="legend-item"><strong>需要独占の雇用量</strong>: MRP = MLC で決まる（N_m）</div>
+        <div class="legend-item"><strong>需要独占の賃金</strong>: N_m に対応する供給曲線 S 上の賃金（W_m）</div>
+      </div>
+
+      <table>
+        <tr><th>市場</th><th>雇用量の決定</th><th>賃金の決定</th><th>特徴</th></tr>
+        <tr><td>完全競争</td><td>D = S</td><td>W_c</td><td>均衡点 E_c で決まる</td></tr>
+        <tr><td>需要独占</td><td>MRP = MLC</td><td>S上の W_m</td><td>完全競争より賃金・雇用量が低くなりやすい</td></tr>
+      </table>
+
+      <div class="formula">
+        <strong>試験での決め手:</strong><br>
+        労働市場では、需要者は企業、供給者は家計である。地域で雇用する企業が1社だけのような需要独占では、企業は賃金を低く抑える力を持つ。利潤最大化では「追加的な労働から得られる収入（MRP）」と「追加的な労働にかかる費用（MLC）」が等しくなる雇用量を選び、その雇用量に対応する供給曲線上の賃金を支払う。
+      </div>
+    </div>
+  </div>
 </div>
 </body>
 </html>
