@@ -17,16 +17,16 @@
       "Bash(git stash *)",
       "Bash(git pull *)",
       "Bash(git rebase *)",
-      "mcp__playwright__browser_navigate",
-      "Bash(sort -k5 -n)",
-      "Bash(python3 -c ' *)",
-      "WebSearch",
-      "Bash(dir \"C:\\\\Users\\\\r00000789\\\\SMEC\\\\第一次試験\")",
-      "Bash(dir C:\\\\Users\\\\r00000789\\\\SMEC\\\\第一次試験\\\\中小企業経営・中小企業政策 *)",
-      "WebFetch(domain:www.smrj.go.jp)",
-      "WebFetch(domain:kodoka.smrj.go.jp)",
-      "Bash(conda --version)",
-      "Bash(conda env *)"
+      "Bash(git -C \"C:/Users/giris/SMEC\" status)",
+      "Bash(git -C \"C:/Users/giris/SMEC\" diff --stat)",
+      "Bash(git -C \"C:/Users/giris/SMEC\" diff --name-only)",
+      "Bash(git -C \"C:/Users/giris/SMEC\" ls-files --others --exclude-standard)",
+      "Bash(git *)",
+      "Bash(Get-ChildItem *)",
+      "Bash(magick --version)",
+      "Bash(ffmpeg -version)",
+      "Bash(python -c \"from PIL import Image; print\\('PIL OK'\\)\")",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\giris\\\\SMEC\\\\第一次試験\\\\経済学・経済政策\\\\\" -File | Where-Object { $_.Extension -in '.md','.html' } | Sort-Object Name | Select-Object Name, LastWriteTime)"
     ]
   }
 }
