@@ -2,9 +2,13 @@
     "python-envs.defaultEnvManager": "ms-python.python:conda",
     "python-envs.defaultPackageManager": "ms-python.python:conda",
     "cSpell.words": [
+        "ECRS",
+        "EDLP",
         "GTIN",
         "HACCP",
         "masakari",
+        "MTBF",
+        "MTTR",
         "SMEC"
     ]
 }
