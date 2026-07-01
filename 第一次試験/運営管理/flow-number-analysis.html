@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>流動数分析 | 運営管理</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #202124;
+      --muted: #5f6368;
+      --line: #d8dee4;
+      --paper: #ffffff;
+      --ground: #f6f8fa;
+      --accent: #116149;
+      --accent-soft: #e7f4ef;
+      --warn: #9a5b00;
+      --warn-soft: #fff3d6;
+      --danger: #b42318;
+      --danger-soft: #fff0ed;
+      --blue: #2864a6;
+      --orange: #c65f14;
+      --green: #15835a;
+      --shadow: 0 8px 24px rgb(32 33 36 / 8%);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, system-ui, sans-serif;
+      color: var(--ink);
+      background: var(--ground);
+      line-height: 1.75;
+    }
+
+    header {
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .hero {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 36px 20px 28px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, .9fr);
+      gap: 28px;
+      align-items: center;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.35;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 4vw, 3.3rem);
+      font-weight: 800;
+    }
+
+    h2 {
+      font-size: 1.45rem;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--accent);
+    }
+
+    h3 {
+      font-size: 1.08rem;
+      margin-top: 2px;
+    }
+
+    p {
+      margin: 8px 0 0;
+    }
+
+    .lead {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 64ch;
+    }
+
+    .tagline {
+      display: inline-flex;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-left: 10px;
+      border-left: 4px solid var(--accent);
+      color: var(--accent);
+      font-size: .9rem;
+      font-weight: 700;
+    }
+
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 24px 20px 48px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .section {
+      margin-top: 22px;
+      padding: 24px 0 2px;
+    }
+
+    .section:first-child {
+      margin-top: 0;
+    }
+
+    .section + .section {
+      border-top: 1px solid var(--line);
+    }
+
+    .note-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .note {
+      min-height: 116px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfd;
+    }
+
+    .note strong {
+      display: block;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .formula {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .formula-item {
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--accent-soft);
+    }
+
+    .formula-item .math {
+      display: block;
+      margin-top: 8px;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--accent);
+      overflow-wrap: anywhere;
+    }
+
+    .chart-card {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfd;
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: .92rem;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .swatch {
+      width: 16px;
+      height: 4px;
+      border-radius: 2px;
+      display: inline-block;
+    }
+
+    .swatch.input {
+      background: var(--blue);
+    }
+
+    .swatch.output {
+      background: var(--orange);
+    }
+
+    .swatch.gap {
+      background: var(--green);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      font-size: .95rem;
+      background: var(--paper);
+    }
+
+    th,
+    td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      vertical-align: top;
+    }
+
+    th {
+      background: #eef3f7;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .answer {
+      margin-top: 14px;
+      padding: 14px;
+      border-left: 4px solid var(--green);
+      background: #edf8f2;
+    }
+
+    .warning {
+      margin-top: 14px;
+      padding: 14px;
+      border-left: 4px solid var(--warn);
+      background: var(--warn-soft);
+    }
+
+    .mistake {
+      margin-top: 14px;
+      padding: 14px;
+      border-left: 4px solid var(--danger);
+      background: var(--danger-soft);
+    }
+
+    .calc {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      font-weight: 700;
+      font-size: .9rem;
+    }
+
+    input {
+      width: 100%;
+      min-height: 42px;
+      padding: 8px 10px;
+      border: 1px solid #b7c0c8;
+      border-radius: 6px;
+      font: inherit;
+      background: var(--paper);
+    }
+
+    input:focus {
+      outline: 3px solid #cfe8dc;
+      border-color: var(--accent);
+    }
+
+    .result {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .result div {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfd;
+      min-height: 90px;
+    }
+
+    .result strong {
+      display: block;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+
+    .result output {
+      display: block;
+      margin-top: 6px;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--accent);
+      overflow-wrap: anywhere;
+    }
+
+    ol,
+    ul {
+      margin: 10px 0 0;
+      padding-left: 1.35rem;
+    }
+
+    li + li {
+      margin-top: 6px;
+    }
+
+    .quiz {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfd;
+      padding: 12px 14px;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    footer {
+      color: var(--muted);
+      font-size: .86rem;
+      padding: 18px 20px 32px;
+      text-align: center;
+    }
+
+    @media (max-width: 860px) {
+      .hero,
+      .grid,
+      .note-grid,
+      .formula,
+      .calc,
+      .result {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding-top: 28px;
+      }
+
+      .section {
+        padding-top: 20px;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      .note,
+      .chart-card,
+      .formula-item,
+      details,
+      .result div {
+        box-shadow: none;
+      }
+
+      details {
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="hero">
+      <div>
+        <div class="tagline">運営管理・生産管理</div>
+        <h1>流動数分析</h1>
+        <p class="lead">
+          投入から産出までの累積数量を重ねて、仕掛品数、滞留時間、リードタイムを読み取るための分析手法。
+          試験では「縦の差」「横の差」「面積」の意味を取り違えないことが重要。
+        </p>
+      </div>
+      <div class="chart-card" aria-label="流動数分析の累積線図">
+        <svg viewBox="0 0 520 320" role="img">
+          <title>投入累積線と産出累積線の関係</title>
+          <rect x="0" y="0" width="520" height="320" rx="8" fill="#ffffff"></rect>
+          <line x1="58" y1="260" x2="478" y2="260" stroke="#30363d" stroke-width="2"></line>
+          <line x1="58" y1="260" x2="58" y2="34" stroke="#30363d" stroke-width="2"></line>
+          <text x="480" y="282" font-size="14" fill="#30363d">時間</text>
+          <text x="18" y="38" font-size="14" fill="#30363d">累積数</text>
+          <g stroke="#d8dee4" stroke-width="1">
+            <line x1="58" y1="210" x2="478" y2="210"></line>
+            <line x1="58" y1="160" x2="478" y2="160"></line>
+            <line x1="58" y1="110" x2="478" y2="110"></line>
+            <line x1="128" y1="260" x2="128" y2="34"></line>
+            <line x1="198" y1="260" x2="198" y2="34"></line>
+            <line x1="268" y1="260" x2="268" y2="34"></line>
+            <line x1="338" y1="260" x2="338" y2="34"></line>
+            <line x1="408" y1="260" x2="408" y2="34"></line>
+          </g>
+          <path d="M78 238 C148 210 185 160 238 132 C304 98 367 74 452 50" fill="none" stroke="#2864a6" stroke-width="5" stroke-linecap="round"></path>
+          <path d="M95 260 C150 244 196 218 242 188 C305 148 368 116 455 86" fill="none" stroke="#c65f14" stroke-width="5" stroke-linecap="round"></path>
+          <path d="M308 100 L308 148" stroke="#15835a" stroke-width="4" stroke-linecap="round"></path>
+          <path d="M234 188 L308 188" stroke="#15835a" stroke-width="4" stroke-linecap="round"></path>
+          <circle cx="308" cy="100" r="5" fill="#15835a"></circle>
+          <circle cx="308" cy="148" r="5" fill="#15835a"></circle>
+          <circle cx="234" cy="188" r="5" fill="#15835a"></circle>
+          <circle cx="308" cy="188" r="5" fill="#15835a"></circle>
+          <text x="318" y="126" font-size="14" fill="#15835a" font-weight="700">縦の差 = 滞留数</text>
+          <text x="232" y="207" font-size="14" fill="#15835a" font-weight="700">横の差 = 滞留時間</text>
+          <text x="364" y="48" font-size="14" fill="#2864a6" font-weight="700">投入累積線</text>
+          <text x="358" y="104" font-size="14" fill="#c65f14" font-weight="700">産出累積線</text>
+        </svg>
+        <div class="legend">
+          <span><i class="swatch input"></i>投入累積線</span>
+          <span><i class="swatch output"></i>産出累積線</span>
+          <span><i class="swatch gap"></i>読み取りポイント</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <h2>基本</h2>
+      <div class="note-grid">
+        <div class="note">
+          <strong>目的</strong>
+          工程に投入された品物が、いつ、どれだけ産出されたかを累積線で表し、停滞や能力不足を見つける。
+        </div>
+        <div class="note">
+          <strong>対象</strong>
+          工程、ライン、窓口、倉庫、検査工程など、投入と産出を時系列で記録できる流れに使える。
+        </div>
+        <div class="note">
+          <strong>別名の近い概念</strong>
+          累積流動図、累積曲線、入出庫累積線による仕掛・待ち行列の分析。
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>図の読み方</h2>
+      <div class="grid">
+        <div>
+          <h3>縦の差</h3>
+          <p>
+            同じ時点で、投入累積数から産出累積数を引いた差。工程内に残っている数量を表す。
+          </p>
+          <div class="answer">
+            縦の差 = 滞留数 = 仕掛品数 = 未完成数
+          </div>
+        </div>
+        <div>
+          <h3>横の差</h3>
+          <p>
+            同じ累積数量に対して、投入された時刻と産出された時刻の差。品物が工程内にいた時間を表す。
+          </p>
+          <div class="answer">
+            横の差 = 滞留時間 = 通過時間 = リードタイム
+          </div>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>見る場所</th>
+            <th>意味</th>
+            <th>試験での言い換え</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>投入累積線の傾き</td>
+            <td>単位時間あたりの投入量</td>
+            <td>投入速度、到着率</td>
+          </tr>
+          <tr>
+            <td>産出累積線の傾き</td>
+            <td>単位時間あたりの完成量</td>
+            <td>産出速度、処理率</td>
+          </tr>
+          <tr>
+            <td>2本の線の間隔が広がる</td>
+            <td>投入に対して産出が追いついていない</td>
+            <td>仕掛増加、滞留増加、ボトルネック発生</td>
+          </tr>
+          <tr>
+            <td>2本の線の間隔が狭まる</td>
+            <td>産出が進み、工程内の滞留が減っている</td>
+            <td>仕掛減少、遅れの回復</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>公式</h2>
+      <div class="formula">
+        <div class="formula-item">
+          滞留数
+          <span class="math">投入累積数 - 産出累積数</span>
+        </div>
+        <div class="formula-item">
+          平均滞留時間
+          <span class="math">総滞留時間 ÷ 完成数</span>
+        </div>
+        <div class="formula-item">
+          リトルの法則
+          <span class="math">平均滞留数 = 処理率 × 平均滞留時間</span>
+        </div>
+      </div>
+      <div class="warning">
+        面積で考える場合、投入累積線と産出累積線に挟まれた面積は「延べ滞留数」を表す。
+        横軸が時間、縦軸が数量なので、面積の単位は「個・時間」になる。
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>計算例</h2>
+      <p>
+        8時間で80個を完成した工程がある。平均仕掛品数が20個で安定しているとき、平均滞留時間を求める。
+      </p>
+      <ol>
+        <li>処理率 = 80個 ÷ 8時間 = 10個/時間</li>
+        <li>平均滞留数 = 処理率 × 平均滞留時間</li>
+        <li>20個 = 10個/時間 × 平均滞留時間</li>
+        <li>平均滞留時間 = 2時間</li>
+      </ol>
+      <div class="answer">
+        答え：平均滞留時間は2時間。仕掛品が多いほど、同じ処理率でもリードタイムは長くなる。
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>ミニ計算ツール</h2>
+      <p>
+        処理率、平均滞留時間、平均滞留数の関係を確認する。未入力の1項目を自動計算する。
+      </p>
+      <div class="calc">
+        <label>
+          完成数
+          <input id="completed" type="number" min="0" step="1" value="80">
+        </label>
+        <label>
+          観測時間
+          <input id="period" type="number" min="0.01" step="0.1" value="8">
+        </label>
+        <label>
+          平均滞留数
+          <input id="wip" type="number" min="0" step="0.1" value="20">
+        </label>
+        <label>
+          平均滞留時間
+          <input id="leadTime" type="number" min="0" step="0.1" placeholder="自動計算">
+        </label>
+      </div>
+      <div class="result" aria-live="polite">
+        <div>
+          <strong>処理率</strong>
+          <output id="rate">10.00 個/時間</output>
+        </div>
+        <div>
+          <strong>計算した平均滞留時間</strong>
+          <output id="calcLeadTime">2.00 時間</output>
+        </div>
+        <div>
+          <strong>計算した平均滞留数</strong>
+          <output id="calcWip">20.00 個</output>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>ひっかけポイント</h2>
+      <div class="mistake">
+        横の差と縦の差を混同しない。縦は数量、横は時間。問題文が「何個滞留しているか」なら縦、「何時間かかったか」なら横を見る。
+      </div>
+      <ul>
+        <li>累積線は右上がりになる。日ごとの生産量そのものではなく、累積した数量を示す。</li>
+        <li>投入累積線が産出累積線より上にある範囲では、工程内に未完成品がある。</li>
+        <li>産出累積線の傾きが緩い区間は、処理能力の不足や停止を疑う。</li>
+        <li>平均を求めるときは、対象期間と完成数の範囲をそろえる。</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>確認問題</h2>
+      <div class="quiz">
+        <details>
+          <summary>問題1：同一時点で投入累積数が120個、産出累積数が95個である。滞留数は何個か。</summary>
+          <p>120 - 95 = 25個。縦の差を読む。</p>
+        </details>
+        <details>
+          <summary>問題2：ある累積数量に達した投入時刻が10時、産出時刻が13時30分である。滞留時間は何時間か。</summary>
+          <p>3.5時間。横の差を読む。</p>
+        </details>
+        <details>
+          <summary>問題3：平均滞留数が30個、処理率が6個/時間である。平均滞留時間は何時間か。</summary>
+          <p>30 ÷ 6 = 5時間。リトルの法則を使う。</p>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    第一次試験 / 運営管理 / 流動数分析
+  </footer>
+
+  <script>
+    const completed = document.getElementById("completed");
+    const period = document.getElementById("period");
+    const wip = document.getElementById("wip");
+    const leadTime = document.getElementById("leadTime");
+    const rateOut = document.getElementById("rate");
+    const leadTimeOut = document.getElementById("calcLeadTime");
+    const wipOut = document.getElementById("calcWip");
+
+    const numberValue = (input) => {
+      const value = Number(input.value);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    };
+
+    const format = (value) => {
+      if (!Number.isFinite(value)) return "-";
+      return value.toFixed(2);
+    };
+
+    const update = () => {
+      const completedValue = numberValue(completed);
+      const periodValue = Math.max(numberValue(period), 0.01);
+      const wipValue = numberValue(wip);
+      const leadTimeValue = leadTime.value === "" ? null : numberValue(leadTime);
+      const rate = completedValue / periodValue;
+      const computedLeadTime = rate > 0 ? wipValue / rate : 0;
+      const computedWip = leadTimeValue === null ? wipValue : rate * leadTimeValue;
+
+      rateOut.textContent = `${format(rate)} 個/時間`;
+      leadTimeOut.textContent = `${format(computedLeadTime)} 時間`;
+      wipOut.textContent = `${format(computedWip)} 個`;
+    };
+
+    [completed, period, wip, leadTime].forEach((input) => {
+      input.addEventListener("input", update);
+    });
+
+    update();
+  </script>
+</body>
+</html>
