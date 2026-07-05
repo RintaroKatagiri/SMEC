@@ -11,6 +11,7 @@
         "MTBF",
         "MTTR",
         "RFID",
-        "SMEC"
+        "SMEC",
+        "WACC"
     ]
 }

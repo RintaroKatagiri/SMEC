@@ -1,96 +1,124 @@
 ---
 name: exam-question-drill
-description: Create challenging exam-style practice questions from user-specified subject materials. Use when the user asks for mock questions, drills, quizzes, past-exam-like questions, or continued practice from a specified subject, folder, file, or exam domain such as 中小企業診断士. The skill must confirm the target subject when unspecified, research official or credible past questions when the user asks for past-exam style, and generate original questions rather than copying source questions.
+description: Create challenging exam-style practice questions from local subject materials. Use when the user asks in Japanese or English for mock questions, drills, quizzes, practice questions, past-exam-like questions, calculation drills, or continued study practice from a specified subject, folder, file, or exam domain such as 中小企業診断士, 第一次試験, 財務・会計, 企業経営理論, or 中小企業経営・中小企業政策. Prefer local study materials over general knowledge, auto-select a local subject folder when the exam domain is clear but the subject is unspecified, include calculation/table/journal-entry questions when the subject supports them, and generate original questions rather than copying source questions.
 ---
 
 # Exam Question Drill
 
-## Core workflow
+## Core Workflow
 
-1. Identify the target subject, folder, files, and exam.
-   - If the user does not specify the subject or source range, ask one concise clarification before creating questions.
-   - If the user requests cross-subject questions, use only the subjects they explicitly name.
-2. Read the local materials for the specified subject.
-   - Prefer the user's Markdown, PDFs, notes, or folders over general knowledge.
-   - Track recently used files and concepts in conversation, and avoid repeating them unless reviewing mistakes.
-3. If the user asks for past-exam style or actual-exam level, inspect official or credible past questions for the named exam.
-   - Prefer official exam body pages and official PDFs.
-   - Use third-party sites only to understand indexing, explanations, or availability when official pages are insufficient.
-   - Do not reproduce copyrighted question text. Extract structure, difficulty, reasoning pattern, distractor style, and topic distribution, then write original questions.
-4. Generate one question at a time unless the user requests a batch.
-5. After the user answers, grade it, give a detailed explanation, then ask the next question.
+1. Identify the exam, subject, folder, files, and topic range.
+   - Classify the request scope before choosing sources: explicit file/topic, explicit subject/folder, or broad exam/random practice.
+   - If the user specifies an exam domain such as 中小企業診断士 or 第一次試験 but does not specify a subject folder, do not ask which `第一次試験/` folder to use. Auto-select one subject folder from the local `第一次試験/` directory, then rotate across available subject folders over subsequent questions.
+   - Ask one concise clarification only when neither an exam domain nor a usable local source range can be inferred.
+   - If the user requests cross-subject practice, use only the subjects they explicitly name.
+2. Read the local materials for the specified subject before writing questions.
+   - Prefer the user's Markdown notes, PDFs, folders, and repository materials over general knowledge.
+   - In this repository, first check `第一次試験/` and its subject folders when the user asks about 中小企業診断士 or first-stage exam practice.
+   - Track recently used subject folders, files, topics, and concepts in conversation. Rotate source files for each new question and avoid repeating the same small topic unless reviewing mistakes.
+3. For 中小企業診断士 第一次試験 practice, apply the durable pattern guidance in `references/past-exam-style.md` so questions resemble real first-stage exam structure without browsing every time.
+   - Read `references/past-exam-style.md` at the start of a new drill session, after the skill has been updated, or when the user asks for 本試験風, 過去問風, actual-exam level, or similar.
+   - If current official rules, laws, or past-exam facts are needed and are not in the local materials, browse official or credible sources before relying on them.
+   - Do not reproduce copyrighted question text. Extract only structure, difficulty, reasoning pattern, distractor style, and topic distribution, then write original questions.
+4. For calculation-heavy subjects such as 財務・会計, explicitly choose whether the next question is conceptual, calculation, table interpretation, or journal-entry treatment before writing it, using the recent question mix rather than overcorrecting to one type.
+5. Generate one question at a time unless the user requests a batch.
+6. After the user answers, grade it, explain the reasoning, record any missed concept in the conversation, then ask the next question.
 
-## Subject control
+## Topic Rotation
+
+- Change the source file or clearly distinct subtopic for every new question by default, and announce the selected subject/file in the question header when rotation is active.
+- Do not draw more than two consecutive questions from the same Markdown file, chapter, framework, or tightly related concept cluster.
+- If the user only has an open file or named topic as context, use that source for the first question at most, then rotate to another file in the same subject folder. After one or two questions in that folder, widen to another `第一次試験/` subject folder unless the user asks to stay in the subject.
+- When the user asks broadly for 第一次試験 practice without naming a subject, rotate across available `第一次試験/` subject folders instead of stopping to ask the user to choose one. Start from a subject that has local materials, then move to a different subject folder after one or two questions unless the user asks to stay.
+- When a subject folder has many files, sample broadly across strategy, organization, human resources, labor law, marketing, and consumer behavior before returning to a recent area.
+- If a folder has multiple eligible files, choose randomly from files that have not been used recently. Exclude the current file when a different file is available.
+- If the user has an open file or named topic, use it for the next question only when they explicitly request that topic or no broader source has been established; otherwise treat it as context, not a command to stay there.
+- Revisit missed concepts later, but change the surface form and separate the review by at least two unrelated questions when possible.
+- If the user asks for more variety or points out repetition, immediately switch to a different file; for broad exam practice, also switch to a different subject folder.
+
+## Subject Control
 
 - Treat the user's subject selection as binding.
 - Do not silently switch subjects.
-- If the user says "企業経営理論", use only that folder or files unless they request 横断.
-- If the user later says "財務・会計にして", switch to that subject and reset recent-topic rotation for the new subject.
+- If the user asks for broad 第一次試験, 中小企業診断士, mixed, random, or おまかせ practice without naming a subject, subject switching across local `第一次試験/` folders is expected and should be announced in the question header.
+- If the user specifies a subject folder such as 経営法務, rotate within that folder and do not switch to another subject folder unless the user asks for mixed, random, or broad exam practice.
+- If the user says `企業経営理論`, use only that folder or files unless they request mixed practice.
+- If the user later switches subjects, reset recent-topic rotation for the new subject.
 - If a requested topic cannot be found locally, say so and ask whether to use web research or another source.
 
-## Question quality rules
+## Question Quality
 
 - Avoid low-level definition recall as the default.
-- Prefer application, comparison, exception handling, cause-effect, and "most appropriate / most inappropriate" questions.
+- Prefer application, comparison, exception handling, cause-effect, and `最も適切` / `最も不適切` questions.
 - Include a short case when it meaningfully raises difficulty.
 - Make all answer choices plausible.
-- Build distractors from common misunderstandings, nearby concepts, reversed causal relationships, missing conditions, overgeneralizations, or partial truths.
+- Build distractors from common misunderstandings, nearby concepts, reversed causal relationships, missing conditions, overgeneralizations, and partial truths.
 - Avoid choices that are obviously from unrelated topics.
 - Require at least one reasoning step beyond matching a term to its definition.
 - Mix formats:
-  - most appropriate
-  - most inappropriate
-  - correct/incorrect combination
-  - case-based concept identification
-  - statement comparison
-  - calculation or table interpretation when the subject supports it
+  - 最も適切
+  - 最も不適切
+  - 正誤組み合わせ
+  - 事例から概念を特定
+  - 複数記述の比較
+  - 計算または表の解釈
 
-## Difficulty target
+## Calculation-Heavy Subjects
+
+Apply these rules when the selected subject is 財務・会計 or another quantitative domain:
+
+- Include calculation, table interpretation, or journal-entry treatment questions regularly. Default mix for 財務・会計: in any rolling set of about five questions, aim for two or three quantitative/table/journal-entry questions unless the user asks for conceptual-only or calculation-only practice.
+- Interpret requests such as `計算問題も必要` or `計算も混ぜて` as balance corrections, not as a switch to calculation-only practice.
+- Avoid long streaks of the same format. Do not ask more than two quantitative questions in a row unless the user explicitly asks for 計算問題だけ, 計算特訓, or a similar calculation-only drill. If the last two questions were quantitative, the next question should be conceptual, treatment-based, or a statement-comparison question.
+- If the recent sequence has become too conceptual, make the next question quantitative. If the recent sequence has become too quantitative, restore balance with a non-calculation question before continuing.
+- Rotate quantitative topics across source files, such as 財務指標, キャッシュコンバージョンサイクル, 投資意思決定, 原価計算, 月末仕掛品原価, 企業価値評価, ポートフォリオ理論, 先物・オプション, 法人税, and 貸倒引当金.
+- For a calculation question:
+  - Provide all needed numbers in the stem or a compact table.
+  - State rounding rules, units, and whether to choose the closest value.
+  - Use numbers that can be solved by hand within a few minutes.
+  - Keep one unambiguous correct answer.
+  - Build distractors from likely mistakes: wrong denominator, sign reversal, ignoring time value, using WACC when risk differs, mixing fixed ratio and fixed long-term conformity ratio, adding instead of subtracting CCC components, forgetting existing allowance balance, or applying normal loss to the wrong output.
+- Do not reveal the formula or calculation steps before the user answers unless the user asks for a worked example.
+- Accept either a choice number/letter or a numeric answer when the question is calculation-based and the answer is unambiguous.
+- When grading a calculation question, show the formula, substitutions, final calculation, and the shortest diagnostic explanation for each plausible wrong route.
+- If a calculation depends on current tax rates, legal thresholds, or official exam facts not present in local notes, browse official or credible sources or avoid date-sensitive numbers.
+
+## Difficulty Target
 
 Default to Japanese professional certification exam level:
 
 - Basic recall: 10% or less, mostly for warm-up or review.
-- Standard: 50%, requires discriminating similar concepts.
-- Hard: 40%, combines concepts, exceptions, or case application.
+- Standard: 50%, requiring discrimination between similar concepts.
+- Hard: 40%, combining concepts, exceptions, or case application.
 
-For 中小企業診断士 first-stage practice:
+For 財務・会計:
+
+- Quantitative/table/journal-entry questions: 40-60% by default.
+- Pure concept questions: 40-60% by default.
+- Prefer alternating conceptual and quantitative angles within the same broad area, then rotate files.
+- Treat the target as a rolling balance, not a block schedule. A correction toward calculation should usually affect the next one question, then return to mixed rotation.
+
+For 中小企業診断士 第一次試験 practice:
 
 - Use 4 or 5 choices as appropriate for the source style.
-- Use phrasing similar to the exam, such as "最も適切なものはどれか" and "最も不適切なものはどれか".
+- Use exam-like phrasing such as `最も適切なものはどれか` and `最も不適切なものはどれか`.
 - Include multi-statement questions when useful.
-- Keep the question original even when inspired by a past question.
+- Keep every question original even when inspired by a past-exam pattern.
 
-## Past-exam research notes
-
-When researching 中小企業診断士:
-
-- Start with 日本中小企業診断士協会連合会 / 中小企業診断協会 official exam problem pages.
-- Check recent first-stage PDFs and answer-all-treatment notes because invalidated questions reveal ambiguity risks.
-- Observe:
-  - number of choices
-  - whether the question is direct, case-based, or multi-statement
-  - how distractors are made
-  - how legal or policy questions handle dates and statutory detail
-  - whether a concept is tested by definition, application, contrast, or exception
-- Convert observations into original questions grounded in the user's local materials.
-
-See `references/past-exam-style.md` for reusable design patterns.
-
-## Interaction style
+## Interaction Style
 
 - Ask only one question at a time by default.
 - Do not reveal the answer before the user responds.
-- Accept lowercase answers.
-- If the user answers ambiguously, ask for clarification instead of grading.
-- Make explanations detailed enough for review, not just answer confirmation.
+- Accept numeric answers, letters, and short Japanese answers when unambiguous.
+- If the user's answer is ambiguous, ask for clarification instead of grading.
 - For each graded question, include:
   - the tested concept and why it matters
   - the decisive clue in the question stem
   - why the correct choice is correct
-  - why every incorrect choice is wrong, especially when it is partially true
-  - the common trap or misunderstanding behind at least the most plausible distractor
-  - a short memory hook, comparison table, or rule of thumb when it helps retention
-- Keep the explanation focused on the current question; do not add broad textbook summaries unless the user asks.
+  - why every incorrect choice is wrong, especially when partially true
+  - the common trap behind at least the most plausible distractor
+  - a short memory hook, comparison table, or rule of thumb when useful
+- Keep explanations focused on the current question; avoid broad textbook summaries unless asked.
 - Maintain a mistake log in conversation:
   - subject
   - source file or topic
@@ -98,7 +126,7 @@ See `references/past-exam-style.md` for reusable design patterns.
   - error type
 - Revisit missed concepts later with a changed surface form.
 
-## Output template
+## Output Template
 
 Use this shape for a single question:
 
@@ -107,18 +135,18 @@ Use this shape for a single question:
 
 <question text>
 
-A. <choice>
-B. <choice>
-C. <choice>
-D. <choice>
+1. <choice>
+2. <choice>
+3. <choice>
+4. <choice>
 
-回答は `A`〜`D` でどうぞ。
+答えを番号でください。
 ```
 
 For grading:
 
 ```markdown
-正解です / 不正解です。正解は `<letter>` です。
+正解です。 / 不正解です。正解は `<number>` です。
 
 論点:
 <tested concept>
@@ -127,13 +155,36 @@ For grading:
 <stem clue and reasoning>
 
 選択肢の検討:
-- `<correct letter>`: <why correct>
-- `<wrong letter>`: <why wrong>
-- `<wrong letter>`: <why wrong>
-- `<wrong letter>`: <why wrong>
+- `1`: <why correct or wrong>
+- `2`: <why correct or wrong>
+- `3`: <why correct or wrong>
+- `4`: <why correct or wrong>
 
 ひっかけポイント:
 <common trap>
+
+**第N+1問：...**
+...
+```
+
+For calculation grading, include the calculation path:
+
+```markdown
+正解です。 / 不正解です。正解は `<number or value>` です。
+
+論点:
+<tested concept>
+
+計算:
+<formula>
+<substitution>
+<answer with unit and rounding>
+
+判断の決め手:
+<why this formula/treatment applies>
+
+ひっかけポイント:
+<common numerical or accounting trap>
 
 **第N+1問：...**
 ...
