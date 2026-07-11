@@ -28,7 +28,10 @@
       "Bash(python -c \"from PIL import Image; print\\('PIL OK'\\)\")",
       "PowerShell(Get-ChildItem \"C:\\\\Users\\\\giris\\\\SMEC\\\\第一次試験\\\\経済学・経済政策\\\\\" -File | Where-Object { $_.Extension -in '.md','.html' } | Sort-Object Name | Select-Object Name, LastWriteTime)",
       "Read(//c//**)",
-      "Bash(echo \"exit: $?\")"
+      "Bash(echo \"exit: $?\")",
+      "Bash(python -c ' *)",
+      "Bash(python *)",
+      "Bash(claude mcp *)"
     ]
   }
 }
