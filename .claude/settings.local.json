@@ -31,7 +31,8 @@
       "Bash(echo \"exit: $?\")",
       "Bash(python -c ' *)",
       "Bash(python *)",
-      "Bash(claude mcp *)"
+      "Bash(claude mcp *)",
+      "PowerShell(git *)"
     ]
   }
 }
