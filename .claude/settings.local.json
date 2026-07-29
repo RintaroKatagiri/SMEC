@@ -32,7 +32,11 @@
       "Bash(python -c ' *)",
       "Bash(python *)",
       "Bash(claude mcp *)",
-      "PowerShell(git *)"
+      "PowerShell(git *)",
+      "mcp__github__get_me",
+      "Bash([ -f \"$HOME/.claude.json\" ])",
+      "Bash(python3 *)",
+      "mcp__github__pull_request_read"
     ]
   }
 }
