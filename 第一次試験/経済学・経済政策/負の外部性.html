@@ -189,5 +189,107 @@
   </div>
 </div>
 </div>
+
+<h2>生産側の外部不経済（工場排煙などの例）</h2>
+<div class="container">
+<svg width="560" height="520" style="background:white;border:1px solid #ddd;border-radius:8px;">
+  <defs>
+    <marker id="arrow2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#333"/>
+    </marker>
+  </defs>
+
+  <!-- 座標系: svgX=90+Q*58, svgY=480-P*52（上図と同じ座標系） -->
+  <!-- D（需要）: P=8-Q → (90,64)-(496,428) -->
+  <!-- PMC（私的限界費用）: P=1+Q → (90,428)-(496,64) -->
+  <!-- SMC（社会的限界費用）: P=3+Q（PMCより外部費用2だけ上方）→ (90,324)-(380,64) -->
+  <!-- 完全競争均衡 G'：D∩PMC → 8-Q=1+Q → Q=3.5,P=4.5 → (293,246) -->
+  <!-- 社会的最適 E'：D∩SMC → 8-Q=3+Q → Q=2.5,P=5.5 → (235,194) -->
+  <!-- F'：Q=3.5 における SMC の高さ P=6.5 → (293,142) -->
+  <!-- H'：Q=2.5 における PMC の高さ P=3.5 → (235,298) -->
+
+  <!-- 死荷重（DWL）: G'・F'・E' で囲まれる三角形 -->
+  <polygon points="235,194 293,246 293,142" fill="#ffccbc" opacity="0.8"/>
+
+  <!-- 社会最適量における外部費用の総額（四角形） -->
+  <polygon points="90,324 235,220 235,298 90,402" fill="#e8f5e9" opacity="0.5"/>
+
+  <!-- 軸 -->
+  <line x1="90" y1="480" x2="90" y2="30" stroke="#333" stroke-width="2" marker-end="url(#arrow2)"/>
+  <line x1="90" y1="480" x2="530" y2="480" stroke="#333" stroke-width="2" marker-end="url(#arrow2)"/>
+  <text x="72" y="25" font-size="14" fill="#333">価格・費用</text>
+  <text x="533" y="485" font-size="14" fill="#333">数量</text>
+  <text x="72" y="486" font-size="13" fill="#333">O</text>
+
+  <!-- 需要曲線 D: (90,64)-(496,428) -->
+  <line x1="90" y1="64" x2="496" y2="428" stroke="#1565c0" stroke-width="2.5"/>
+  <text x="498" y="428" font-size="14" fill="#1565c0" font-weight="bold">D</text>
+
+  <!-- 私的限界費用 PMC: (90,428)-(496,64) -->
+  <line x1="90" y1="428" x2="496" y2="64" stroke="#f57f17" stroke-width="2.5"/>
+  <text x="498" y="62" font-size="14" fill="#f57f17" font-weight="bold">PMC</text>
+
+  <!-- 社会的限界費用 SMC: (90,324)-(380,64) -->
+  <line x1="90" y1="324" x2="380" y2="64" stroke="#c62828" stroke-width="2.5" stroke-dasharray="7,4"/>
+  <text x="384" y="64" font-size="14" fill="#c62828" font-weight="bold">SMC</text>
+
+  <!-- 完全競争均衡点 G'：(293,246) -->
+  <circle cx="293" cy="246" r="6" fill="#1565c0"/>
+  <line x1="293" y1="246" x2="293" y2="480" stroke="#1565c0" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="298" y="242" font-size="14" fill="#1565c0" font-weight="bold">G'</text>
+
+  <!-- 社会的最適点 E'：(235,194) -->
+  <circle cx="235" cy="194" r="6" fill="#c62828"/>
+  <line x1="235" y1="194" x2="235" y2="480" stroke="#c62828" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="240" y="190" font-size="14" fill="#c62828" font-weight="bold">E'</text>
+
+  <!-- F'：Q=3.5 における SMC 上の点 (293,142) -->
+  <circle cx="293" cy="142" r="5" fill="#c62828" opacity="0.8"/>
+  <text x="298" y="140" font-size="14" fill="#c62828" font-weight="bold">F'</text>
+
+  <!-- H'：Q=2.5 における PMC 上の点 (235,298) -->
+  <circle cx="235" cy="298" r="5" fill="#f57f17" opacity="0.8"/>
+  <text x="240" y="303" font-size="14" fill="#f57f17" font-weight="bold">H'</text>
+
+  <!-- Q軸ラベル -->
+  <text x="227" y="494" font-size="12" fill="#c62828">Q_社</text>
+  <text x="280" y="494" font-size="12" fill="#1565c0">Q_競</text>
+
+  <!-- 外部費用の差（SMC - PMC = 2）を示す矢印 -->
+  <line x1="100" y1="324" x2="100" y2="428" stroke="#e65100" stroke-width="1.5" marker-end="url(#arrow2)"/>
+  <line x1="100" y1="428" x2="100" y2="324" stroke="#e65100" stroke-width="1.5" marker-end="url(#arrow2)"/>
+  <text x="105" y="382" font-size="11" fill="#e65100">外部費</text>
+  <text x="105" y="395" font-size="11" fill="#e65100">用分</text>
+
+  <!-- DWL ラベル -->
+  <text x="248" y="200" font-size="11" fill="#bf360c" font-weight="bold">DWL</text>
+</svg>
+
+<div>
+  <div class="legend">
+    <h3>凡例</h3>
+    <div class="legend-item" style="color:#1565c0"><strong>D</strong>: 需要曲線</div>
+    <div class="legend-item" style="color:#f57f17"><strong>PMC</strong>: 私的限界費用曲線（生産者が負担する費用のみ）</div>
+    <div class="legend-item" style="color:#c62828"><strong>SMC</strong>: 社会的限界費用曲線（外部費用を含む）</div>
+    <p style="font-size:12px;color:#666">SMC = PMC + 外部費用分 → PMC より上方</p>
+    <hr/>
+    <div class="legend-item"><span style="color:#1565c0;font-weight:bold">●G'</span>: 完全競争均衡（過大生産）</div>
+    <div class="legend-item"><span style="color:#c62828;font-weight:bold">●E'</span>: 社会的最適均衡</div>
+    <div class="legend-item"><span style="color:#c62828;font-weight:bold">●F'</span>: 競争均衡量での SMC 上の点</div>
+    <div class="legend-item"><span style="color:#f57f17;font-weight:bold">●H'</span>: 社会最適量での PMC 上の点</div>
+    <hr/>
+    <div class="legend-item" style="background:#e8f5e9;padding:3px;border-radius:3px;font-size:12px">■ 四角形: 社会最適量における外部費用の総額</div>
+    <div class="legend-item" style="background:#ffccbc;padding:3px;border-radius:3px;font-size:12px">■ △G'F'E': 過大生産による死荷重（DWL）</div>
+  </div>
+
+  <div class="note">
+    <strong>核心:</strong> 負の外部性（生産側）→ PMC &lt; SMC → 完全競争均衡で過大生産<br>
+    Q_競争 &gt; Q_社会最適（競争均衡 G' が社会最適 E' の右）<br><br>
+    <strong>政策対応（ピグー税）:</strong><br>
+    外部費用の大きさ分の税 = SMC − PMC を生産者に課す<br>
+    → 私的費用を社会的費用に一致させる
+  </div>
+</div>
+</div>
 </body>
 </html>
